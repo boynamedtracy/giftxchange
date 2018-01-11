@@ -8,6 +8,16 @@ $color-fruitbasket: #624549; //98,69,73
 $color-rudolphsnose: #c74e45; //199,78,69
 
 //bootstrap overrides
+
+$theme-colors: (
+    "primary": $color-pa,
+    "secondary": $color-spiraling,
+    "success": $color-carmel,
+    "danger": $color-rudolphsnose,
+    "warning": $color-pa,
+    "info": $color-spiraling    
+);
+
 $body-bg: #C74E45;
 $body-color: #eebd85;
 
