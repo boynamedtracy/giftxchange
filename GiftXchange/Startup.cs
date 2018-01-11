@@ -34,7 +34,10 @@ namespace GiftXchange
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseMvcWithDefaultRoute();
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
         }
     }
 }
