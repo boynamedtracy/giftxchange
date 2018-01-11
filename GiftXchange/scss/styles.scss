@@ -1,0 +1,15 @@
+/*
+    color palette: http://www.colourlovers.com/palette/2586345/Santas_Tea_Party
+*/
+$color-pa: #eebd85; //238,189,133
+$color-spiraling: #d09462; //208,148,98
+$color-carmel: #896857; //137,104,87
+$color-fruitbasket: #624549; //98,69,73
+$color-rudolphsnose: #c74e45; //199,78,69
+
+//bootstrap overrides
+$body-bg: #C74E45;
+$body-color: #eebd85;
+
+@import "node_modules/bootstrap/scss/bootstrap";
+
