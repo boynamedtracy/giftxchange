@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +13,7 @@ namespace GiftXchange.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "Moe", "Larry", "Curly" };
+            return new string[] { "Moe", "Larry", "Curly", "Shep" };
         }
 
         // GET api/values/5
