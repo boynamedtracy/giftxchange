@@ -19,7 +19,7 @@ namespace GiftXchange.Models
 
     public DateTime IssuedAt { get; set; } = DateTime.UtcNow;
 
-    public TimeSpan ValidFor { get; set; } = TimeSpan.FromMinutes(120);
+    public TimeSpan ValidFor { get; set; } = TimeSpan.FromDays(7);
 
 
     public Func<Task<string>> JtiGenerator =>
