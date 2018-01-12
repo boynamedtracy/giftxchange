@@ -14,13 +14,17 @@ import { AlertService, AuthenticationService, UserService } from './_services/in
 
 import { AuthGuard } from './_guards/auth.guard';
 import { AppConfig } from './app.config';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    AlertComponent
+    AlertComponent,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
