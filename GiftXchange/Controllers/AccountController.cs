@@ -57,10 +57,12 @@ namespace GiftXchange.Controllers
       return Ok(new
       {
         Id = user.Id,
-        username = user.UserName,
-        firstname = user.firstName,
-        lastname = user.lastName,
+        userName = user.UserName,
+        firstName = user.firstName,
+        lastName = user.lastName,
         email = user.Email,
+        facebookId = user.facebookId,
+        photoUrl = user.photoUrl,
         token = jwt
       });
 

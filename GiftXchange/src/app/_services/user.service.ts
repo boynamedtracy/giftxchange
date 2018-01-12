@@ -3,8 +3,6 @@ import { Http, Headers, RequestOptions, Response } from '@angular/http';
 
 import { BaseService } from './base.service'
 
-import { Register } from '../_models/index';
-
 import { AppConfig } from '../app.config';
 
 @Injectable()

@@ -1,1 +1,2 @@
-<p>Home</p>
+<p class="lead" *ngIf="currentUser != null">Hi {{currentUser.firstName}}!</p>
+<p *ngIf="currentUser == null">You are not currently logged in. <a [routerLink]="['/login']">Click here to login</a></p>
