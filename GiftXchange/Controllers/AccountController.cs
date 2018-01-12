@@ -93,7 +93,7 @@ namespace GiftXchange.Controllers
         return Ok(result);
 
       }
-      catch (Exception ex)
+      catch (AppException ex)
       {
         return BadRequest(ex.Message);
       }
