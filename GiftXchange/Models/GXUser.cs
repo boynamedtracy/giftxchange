@@ -12,6 +12,9 @@ namespace GiftXchange.Models
     [MaxLength(128)]
     public string lastName { get; set; }
 
+    [MaxLength(128)]
+    public string nickname { get; set; }
+
     public string gender { get; set; }
 
     public DateTime? birthDate { get; set; } = null;
@@ -22,5 +25,6 @@ namespace GiftXchange.Models
 
     [Required]
     public DateTime dateJoined { get; set; } = DateTime.Now;
+
   }
 }

@@ -11,9 +11,10 @@ using System;
 namespace GiftXchange.Migrations
 {
     [DbContext(typeof(GXContext))]
-    partial class GXContextModelSnapshot : ModelSnapshot
+    [Migration("20180111223851_GXUser_AddNickname")]
+    partial class GXUser_AddNickname
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
