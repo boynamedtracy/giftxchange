@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="src\app\_directives\alert.component.ts" />
+    <None Remove="src\app\_services\alert.service.ts" />
+    <None Remove="src\app\_services\index.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.0.1" />
@@ -24,6 +30,12 @@
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="wwwroot\assets\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="src\app\_directives\alert.component.ts" />
+    <TypeScriptCompile Include="src\app\_services\alert.service.ts" />
+    <TypeScriptCompile Include="src\app\_services\index.ts" />
   </ItemGroup>
 
   <Target Name="AngularBuild" AfterTargets="Build">

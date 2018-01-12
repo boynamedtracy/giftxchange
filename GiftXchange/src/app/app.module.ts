@@ -9,11 +9,15 @@ import { HttpModule, XHRBackend } from '@angular/http';
 
 import { routing } from './app.routing';
 
+import { AlertComponent } from './_directives/alert.component';
+import { AlertService } from './_services/index';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,
@@ -21,7 +25,9 @@ import { routing } from './app.routing';
     HttpModule,
     routing
   ],
-  providers: [ ],
+  providers: [
+    AlertService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
