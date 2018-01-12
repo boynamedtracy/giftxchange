@@ -8,10 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="src\app\app.config.ts" />
     <None Remove="src\app\_directives\alert.component.ts" />
     <None Remove="src\app\_directives\index.ts" />
+    <None Remove="src\app\_guards\auth.guard.ts" />
+    <None Remove="src\app\_models\index.ts" />
+    <None Remove="src\app\_models\login.model.ts" />
+    <None Remove="src\app\_models\register.model.ts" />
     <None Remove="src\app\_services\alert.service.ts" />
+    <None Remove="src\app\_services\authentication.service.ts" />
+    <None Remove="src\app\_services\base.service.ts" />
     <None Remove="src\app\_services\index.ts" />
+    <None Remove="src\app\_services\user.service.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,10 +42,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="src\app\app.config.ts" />
     <TypeScriptCompile Include="src\app\_directives\alert.component.ts" />
     <TypeScriptCompile Include="src\app\_directives\index.ts" />
+    <TypeScriptCompile Include="src\app\_guards\auth.guard.ts" />
+    <TypeScriptCompile Include="src\app\_models\index.ts" />
+    <TypeScriptCompile Include="src\app\_models\login.model.ts" />
+    <TypeScriptCompile Include="src\app\_models\register.model.ts" />
     <TypeScriptCompile Include="src\app\_services\alert.service.ts" />
+    <TypeScriptCompile Include="src\app\_services\authentication.service.ts" />
+    <TypeScriptCompile Include="src\app\_services\base.service.ts" />
     <TypeScriptCompile Include="src\app\_services\index.ts" />
+    <TypeScriptCompile Include="src\app\_services\user.service.ts" />
   </ItemGroup>
 
   <Target Name="AngularBuild" AfterTargets="Build">
