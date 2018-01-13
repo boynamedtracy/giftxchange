@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 
+
+
 import { BaseService } from './base.service'
 
 import { AppConfig } from '../app.config';
+import { User } from '../_models/user.model';
 
 @Injectable()
 export class UserService extends BaseService {
