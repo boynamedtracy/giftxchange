@@ -1,2 +1,4 @@
 <p class="lead" *ngIf="currentUser != null">Hi {{currentUser.firstName}}! <a href="javascript:;" (click)="logout()">Logout</a></p>
-<p *ngIf="currentUser == null">You are not currently logged in. <a [routerLink]="['/login']">Click here to login</a></p>
+<div *ngIf="currentUser == null">
+  <p>You are not currently logged in. <a [routerLink]="['/login']">Click here to login</a>. Don't have an account? <a [routerLink]="['/register']">Click here to register</a>
+ </p></div>

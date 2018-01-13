@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { AlertService, AuthenticationService } from '../_services/index';
-
-import { RegisterViewModel } from '../_models/register.viewmodel';
+import { LoginViewModel } from '../_models/login.viewmodel';
 
 @Component({
   selector: 'app-login',
