@@ -818,7 +818,8 @@ var GoogleSigninComponent = (function () {
             //YOUR CODE HERE
             that._authService.googleLogin(email, name, id, photoUrl, token)
                 .subscribe(function (data) {
-                that.router.navigate([that.returnUrl]);
+                //that.router.navigate([that.returnUrl]);
+                document.location.href = that.returnUrl;
             }, function (error) {
                 that.alertService.error('There was an error: ' + error);
             });

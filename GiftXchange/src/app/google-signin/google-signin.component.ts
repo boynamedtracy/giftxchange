@@ -60,7 +60,8 @@ export class GoogleSigninComponent implements AfterViewInit {
         that._authService.googleLogin(email, name, id, photoUrl, token)
           .subscribe(
             data => {
-              that.router.navigate([that.returnUrl]);
+              //that.router.navigate([that.returnUrl]);
+              document.location.href = that.returnUrl;
             },
             error => {
               that.alertService.error('There was an error: ' + error);
