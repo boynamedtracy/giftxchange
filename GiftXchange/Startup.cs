@@ -19,6 +19,7 @@ using System.Net;
 using System.Text;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using GiftXchange.Services;
 
 namespace GiftXchange
 {
@@ -115,6 +116,7 @@ namespace GiftXchange
       builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
       builder.AddEntityFrameworkStores<GXContext>().AddDefaultTokenProviders();
 
+      services.AddTransient<IEmailSender, EmailSender>();
 
       services.AddMvc();
 

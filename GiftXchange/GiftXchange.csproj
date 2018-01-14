@@ -5,6 +5,7 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <RetryAttemptsForDeployment>30</RetryAttemptsForDeployment>
     <TypeScriptToolsVersion>2.5</TypeScriptToolsVersion>
+    <UserSecretsId>aspnet-GiftExchange-9EC4505D-FECA-411B-9E98-30598A2499DF</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +31,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.1" />
+    <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
+    <PackageReference Include="SendGrid" Version="9.9.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,7 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
     <Folder Include="wwwroot\assets\" />
   </ItemGroup>
 

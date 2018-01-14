@@ -5,9 +5,12 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using GiftXchange.Auth;
+using GiftXchange.Extensions;
 using GiftXchange.Helpers;
 using GiftXchange.Models;
+using GiftXchange.Services;
 using GiftXchange.ViewModels.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,21 +21,26 @@ using Newtonsoft.Json;
 
 namespace GiftXchange.Controllers
 {
+
+
   [Authorize()]
   [Route("api/account")]
-  public class AccountController : Controller
+  public class AccountController : BaseController
   {
 
     private UserManager<GXUser> _userManager;
     private readonly IJwtFactory _jwtFactory;
     private readonly JwtIssuerOptions _jwtOptions;
+    private readonly IEmailSender _emailSender;
 
-
-    public AccountController(UserManager<GXUser> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions)
+    public AccountController(UserManager<GXUser> userManager,
+      IEmailSender emailSender,
+      IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions)
     {
       _userManager = userManager;
       _jwtFactory = jwtFactory;
       _jwtOptions = jwtOptions.Value;
+      _emailSender = emailSender;
     }
 
     [AllowAnonymous]
@@ -53,6 +61,11 @@ namespace GiftXchange.Controllers
       var user = await _userManager.FindByNameAsync(vm.username);
 
       var jwt = await Tokens.GenerateJwt(identity, _jwtFactory, vm.username, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
+
+      if (!user.EmailConfirmed)
+      {
+        return BadRequest(Errors.AddErrorToModelState("login_failure", "Login error. Code 1", ModelState));
+      }
 
       return Ok(new
       {
@@ -79,7 +92,7 @@ namespace GiftXchange.Controllers
       try
       {
 
-        var userIdentity = new GXUser()
+        var user = new GXUser()
         {
           UserName = vm.email,
           Email = vm.email,
@@ -88,9 +101,23 @@ namespace GiftXchange.Controllers
           gender = vm.gender
         };
 
-        var result = await _userManager.CreateAsync(userIdentity, vm.password);
+        var result = await _userManager.CreateAsync(user, vm.password);
 
-        if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
+        if (!result.Succeeded) {
+          return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
+        };
+
+        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        //var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+
+        var ub = new UriBuilder(url);
+        ub.Path = "confirm-email";
+        ub.Query = $"userId={user.Id}&code={HttpUtility.UrlEncode(code)}";
+
+        var callbackUrl = ub.ToString();
+
+        await _emailSender.SendEmailConfirmationAsync(user.Email, callbackUrl);
+
 
         return Ok(result);
 
@@ -100,6 +127,38 @@ namespace GiftXchange.Controllers
         return BadRequest(ex.Message);
       }
 
+    }
+
+    [AllowAnonymous]
+    [HttpPost("confirmemail")]
+    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailViewModel vm)
+    {
+      if (!ModelState.IsValid)
+        return BadRequest();
+
+      if (vm.userId == null || vm.code == null)
+      {
+        return Redirect("/");
+      }
+      var user = await _userManager.FindByIdAsync(vm.userId);
+      if (user == null)
+      {
+        throw new ApplicationException($"Unable to load user with ID '{vm.userId}'.");
+      }
+      var result = await _userManager.ConfirmEmailAsync(user, vm.code);
+      return Ok(result.Succeeded ? "Success" : "Error");
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult ResetPassword(string code = null)
+    {
+      if (code == null)
+      {
+        throw new ApplicationException("A code must be supplied for password reset.");
+      }
+      //var model = new ResetPasswordViewModel { Code = code };
+      return View();
     }
 
     private async Task<ClaimsIdentity> GetClaimsIdentity(string userName, string password)

@@ -27,6 +27,17 @@ export class UserService extends BaseService {
       .catch(this.handleError);
   }
 
+  confirmEmail(userId: string, code: string) {
+    let body = JSON.stringify({ userId, code });
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
+
+    return this.http.post(this.config.apiUrl + '/account/confirmemail', body, options)
+      .map(res => res)
+      .catch(this.handleError);
+
+  }
+
   // private helper methods
   private jwt() {
     // create authorization header with jwt token
