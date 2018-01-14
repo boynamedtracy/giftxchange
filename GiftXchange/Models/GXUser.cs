@@ -19,9 +19,12 @@ namespace GiftXchange.Models
 
     public DateTime? birthDate { get; set; } = null;
 
-    public long? facebookId { get; set; } = null;
+    public string facebookId { get; set; } = null;
 
     public string photoUrl { get; set; }
+
+    public string googleId { get; set; } = null;
+    public string twitterId { get; set; } = null;
 
     [Required]
     public DateTime dateJoined { get; set; } = DateTime.Now;

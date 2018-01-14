@@ -1,14 +1,21 @@
 import { Component, ElementRef, AfterViewInit } from '@angular/core';
 declare const gapi: any;
 
+import { AuthenticationService } from '../_services/authentication.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { AlertService } from '../_services/alert.service';
+
 @Component({
-  selector: 'app-google-signin',
+  selector: 'google-signin',
   templateUrl: './google-signin.component.html',
   styleUrls: ['./google-signin.component.scss']
 })
 export class GoogleSigninComponent implements AfterViewInit {
 
-  private clientId: string = '609698562138-g2pjbof3t240e7chk2sk8kc57sprek2i.apps.googleusercontent.com';
+  private clientId: string = '609698562138-k40il43lrugkc890rjehpkvjovqrbu8u.apps.googleusercontent.com';
+  private clientSecret: string = 'YZL1AIL_CP_tIL8gZFpRxq8Q';
+
+  returnUrl: string;
 
   private scope = [
     'profile',
@@ -36,21 +43,41 @@ export class GoogleSigninComponent implements AfterViewInit {
       function (googleUser) {
 
         let profile = googleUser.getBasicProfile();
-        console.log('Token || ' + googleUser.getAuthResponse().id_token);
-        console.log('ID: ' + profile.getId());
-        console.log('Name: ' + profile.getName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail());
+
+        var token: string = googleUser.getAuthResponse().id_token;
+        var id: number = profile.getId();
+        var name: string = profile.getName();
+        var photoUrl: string = profile.getImageUrl();
+        var email: string = profile.getEmail();
+
+        //console.log('Token || ' + token);
+        //console.log('ID: ' + id);
+        //console.log('Name: ' + name);
+        //console.log('Image URL: ' + photoUrl);
+        //console.log('Email: ' + email);
         //YOUR CODE HERE
 
+        that._authService.googleLogin(email, name, id, photoUrl, token)
+          .subscribe(
+            data => {
+              that.router.navigate([that.returnUrl]);
+            },
+            error => {
+              that.alertService.error('There was an error: ' + error);
+            }
+          );
 
       }, function (error) {
         console.log(JSON.stringify(error, undefined, 2));
       });
   }
 
-  constructor(private element: ElementRef) {
-    console.log('ElementRef: ', this.element);
+  constructor(private element: ElementRef, private _authService: AuthenticationService,
+    private route: ActivatedRoute,
+    private router: Router, private alertService: AlertService) {
+    //console.log('ElementRef: ', this.element);
+    // get return url from route parameters or default to '/'
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
   ngAfterViewInit() {

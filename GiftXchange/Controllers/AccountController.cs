@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using GiftXchange.Auth;
+using GiftXchange.Data;
 using GiftXchange.Extensions;
 using GiftXchange.Helpers;
 using GiftXchange.Models;
@@ -32,15 +33,18 @@ namespace GiftXchange.Controllers
     private readonly IJwtFactory _jwtFactory;
     private readonly JwtIssuerOptions _jwtOptions;
     private readonly IEmailSender _emailSender;
+    private readonly GXContext _context;
 
     public AccountController(UserManager<GXUser> userManager,
       IEmailSender emailSender,
-      IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions)
+      IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions,
+      GXContext context)
     {
       _userManager = userManager;
       _jwtFactory = jwtFactory;
       _jwtOptions = jwtOptions.Value;
       _emailSender = emailSender;
+      _context = context;
     }
 
     [AllowAnonymous]
@@ -159,6 +163,61 @@ namespace GiftXchange.Controllers
       }
       //var model = new ResetPasswordViewModel { Code = code };
       return View();
+    }
+
+    [HttpPost("googlelogin")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginViewModel vm)
+    {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+      var user = await _userManager.FindByEmailAsync(vm.email);
+      string password = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Substring(0, 8);
+
+      if (user == null)
+      {
+        var u = new GXUser()
+        {
+          Email = vm.email,
+          UserName = vm.email,
+          googleId = vm.googleId,
+          photoUrl = vm.photoUrl,
+          firstName = vm.name,
+          gender = "",
+          dateJoined = DateTime.Now
+        };
+
+        var result = await _userManager.CreateAsync(u, password);
+        if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
+
+        user = await _userManager.FindByEmailAsync(vm.email);
+
+      }
+      else
+      {
+        user.googleId = vm.googleId;
+        user.photoUrl = vm.photoUrl;
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+      }
+
+      var identity = await Task.FromResult(_jwtFactory.GenerateClaimsIdentity(user.UserName, user.Id));
+      var jwt = await Tokens.GenerateJwt(identity, _jwtFactory, user.UserName, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
+
+
+      return Ok(new
+      {
+        Id = user.Id,
+        userName = user.UserName,
+        firstName = user.firstName,
+        lastName = user.lastName,
+        email = user.Email,
+        facebookId = user.facebookId,
+        photoUrl = user.photoUrl,
+        token = jwt
+      });
     }
 
     private async Task<ClaimsIdentity> GetClaimsIdentity(string userName, string password)

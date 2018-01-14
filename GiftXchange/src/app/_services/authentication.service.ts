@@ -56,6 +56,25 @@ export class AuthenticationService extends BaseService {
       .catch(this.handleError);
   }
 
+  googleLogin(email: string, name: string, id: number, photoUrl: string, token: string) {
+    return this.http.post(this.config.apiUrl + '/account/googlelogin', {
+      email: email, name: name,
+      googleId: id, photoUrl: photoUrl, token: token
+    })
+      .map((response: Response) => {
+        // login successful if there's a jwt token in the response
+        let user = response.json();
+        if (user && user.token) {
+          // store user details and jwt token in local storage to keep user logged in between page refreshes
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.loggedIn = true;
+          this._authSource.next(user);
+          return true;
+        }
+      })
+      .catch(this.handleError);
+  }
+
   logout() {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');

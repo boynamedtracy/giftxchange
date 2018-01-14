@@ -62,12 +62,14 @@ namespace GiftXchange.Migrations
 
                     b.Property<DateTime>("dateJoined");
 
-                    b.Property<long?>("facebookId");
+                    b.Property<string>("facebookId");
 
                     b.Property<string>("firstName")
                         .HasMaxLength(128);
 
                     b.Property<string>("gender");
+
+                    b.Property<string>("googleId");
 
                     b.Property<string>("lastName")
                         .HasMaxLength(128);
@@ -76,6 +78,8 @@ namespace GiftXchange.Migrations
                         .HasMaxLength(128);
 
                     b.Property<string>("photoUrl");
+
+                    b.Property<string>("twitterId");
 
                     b.HasKey("Id");
 
