@@ -17,6 +17,8 @@ import { AppConfig } from './app.config';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
+import { GoogleSigninComponent } from './google-signin/google-signin.component';
+import { PrivacyComponent } from './privacy/privacy.component';
 
 
 @NgModule({
@@ -26,7 +28,9 @@ import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
     AlertComponent,
     LoginComponent,
     RegisterComponent,
-    ConfirmEmailComponent
+    ConfirmEmailComponent,
+    GoogleSigninComponent,
+    PrivacyComponent
   ],
   imports: [
     BrowserModule,
