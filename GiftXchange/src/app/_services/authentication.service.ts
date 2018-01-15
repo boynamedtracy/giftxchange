@@ -75,6 +75,27 @@ export class AuthenticationService extends BaseService {
       .catch(this.handleError);
   }
 
+  facebookLogin(accessToken: string) {
+    console.log('login: ' + accessToken);
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    let body = JSON.stringify({ accessToken });
+    return this.http
+      .post(this.config.apiUrl + '/account/fblogin', body, { headers })
+      .map((response: Response) => {
+        // login successful if there's a jwt token in the response
+        let user = response.json();
+        if (user && user.token) {
+          // store user details and jwt token in local storage to keep user logged in between page refreshes
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.loggedIn = true;
+          this._authSource.next(user);
+          return true;
+        }
+      })
+      .catch(this.handleError);
+  }
+
   logout() {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');

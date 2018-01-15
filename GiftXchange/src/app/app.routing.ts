@@ -8,6 +8,7 @@ import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
 
 import { GoogleSigninComponent } from './google-signin/google-signin.component';
 import { PrivacyComponent } from './privacy/privacy.component';
+import { FacebookLoginResponseComponent } from './facebook-login-response/facebook-login-response.component';
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent },
@@ -16,6 +17,7 @@ const appRoutes: Routes = [
   { path: 'gauth', component: GoogleSigninComponent },
   { path: 'confirm-email', component: ConfirmEmailComponent },
   { path: 'privacy', component: PrivacyComponent },
+  { path: 'facebook-login', component: FacebookLoginResponseComponent },
   { path: '**', redirectTo: '' }
 ];
 

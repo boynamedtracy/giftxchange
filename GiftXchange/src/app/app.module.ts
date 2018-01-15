@@ -19,6 +19,8 @@ import { RegisterComponent } from './register/register.component';
 import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
 import { GoogleSigninComponent } from './google-signin/google-signin.component';
 import { PrivacyComponent } from './privacy/privacy.component';
+import { FacebookSigninComponent } from './facebook-signin/facebook-signin.component';
+import { FacebookLoginResponseComponent } from './facebook-login-response/facebook-login-response.component';
 
 
 @NgModule({
@@ -30,7 +32,9 @@ import { PrivacyComponent } from './privacy/privacy.component';
     RegisterComponent,
     ConfirmEmailComponent,
     GoogleSigninComponent,
-    PrivacyComponent
+    PrivacyComponent,
+    FacebookSigninComponent,
+    FacebookLoginResponseComponent,
   ],
   imports: [
     BrowserModule,

@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AlertService, AuthenticationService } from '../_services/index';
 import { LoginViewModel } from '../_models/login.viewmodel';
 import { GoogleSigninComponent } from '../google-signin/google-signin.component';
+import { FacebookSigninComponent } from '../facebook-signin/facebook-signin.component';
 
 @Component({
   selector: 'app-login',

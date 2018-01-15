@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,10 @@ namespace GiftXchange.Controllers
     private readonly JwtIssuerOptions _jwtOptions;
     private readonly IEmailSender _emailSender;
     private readonly GXContext _context;
+
+    private readonly FacebookAuthSettings _fbAuthSettings;
+
+    private static readonly HttpClient Client = new HttpClient();
 
     public AccountController(UserManager<GXUser> userManager,
       IEmailSender emailSender,
@@ -206,6 +211,76 @@ namespace GiftXchange.Controllers
       var identity = await Task.FromResult(_jwtFactory.GenerateClaimsIdentity(user.UserName, user.Id));
       var jwt = await Tokens.GenerateJwt(identity, _jwtFactory, user.UserName, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
 
+
+      return Ok(new
+      {
+        Id = user.Id,
+        userName = user.UserName,
+        firstName = user.firstName,
+        lastName = user.lastName,
+        email = user.Email,
+        facebookId = user.facebookId,
+        photoUrl = user.photoUrl,
+        token = jwt
+      });
+    }
+
+    [AllowAnonymous]
+    [HttpPost("fblogin")]
+    public async Task<IActionResult> FacebookLogin([FromBody] FacebookViewModel vm)
+    {
+      var appAccessTokenResponse = await Client.GetStringAsync($"https://graph.facebook.com/oauth/access_token?client_id={"189190551632736"}&client_secret={"3441dee2b662651ee71377f1677756e1"}&grant_type=client_credentials");
+      var appAccessToken = JsonConvert.DeserializeObject<FacebookAppAccessToken>(appAccessTokenResponse);
+      // 2. validate the user access token
+      var userAccessTokenValidationResponse = await Client.GetStringAsync($"https://graph.facebook.com/debug_token?input_token={vm.AccessToken}&access_token={appAccessToken.AccessToken}");
+      var userAccessTokenValidation = JsonConvert.DeserializeObject<FacebookUserAccessTokenValidation>(userAccessTokenValidationResponse);
+
+      if (!userAccessTokenValidation.Data.IsValid)
+      {
+        return BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid facebook token.", ModelState));
+      }
+
+      // 3. we've got a valid token so we can request user data from fb
+      var userInfoResponse = await Client.GetStringAsync($"https://graph.facebook.com/v2.8/me?fields=id,email,first_name,last_name,name,gender,locale,birthday,picture&access_token={vm.AccessToken}");
+      var userInfo = JsonConvert.DeserializeObject<FacebookUserData>(userInfoResponse);
+
+      // 4. ready to create the local user account (if necessary) and jwt
+      var user = await _userManager.FindByEmailAsync(userInfo.Email);
+
+      if (user == null)
+      {
+        var appUser = new GXUser
+        {
+          firstName = userInfo.FirstName,
+          lastName = userInfo.LastName,
+          facebookId = userInfo.Id.ToString(),
+          Email = userInfo.Email,
+          UserName = userInfo.Email,
+          photoUrl = userInfo.Picture.Data.Url
+        };
+
+        var result = await _userManager.CreateAsync(appUser, Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Substring(0, 8));
+
+        if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
+
+      }
+      else
+      {
+        user.facebookId = userInfo.Id.ToString();
+        user.photoUrl = userInfo.Picture.Data.Url;
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+      }
+
+      // generate the jwt for the local user...
+      var localUser = await _userManager.FindByNameAsync(userInfo.Email);
+
+      if (localUser == null)
+      {
+        return BadRequest(Errors.AddErrorToModelState("login_failure", "Failed to create local user account.", ModelState));
+      }
+      var identity = await Task.FromResult(_jwtFactory.GenerateClaimsIdentity(user.UserName, user.Id));
+      var jwt = await Tokens.GenerateJwt(identity, _jwtFactory, user.UserName, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
 
       return Ok(new
       {
