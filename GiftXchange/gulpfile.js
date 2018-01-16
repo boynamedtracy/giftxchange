@@ -13,7 +13,7 @@ gulp.task('npm', function () {
 });
 
 gulp.task('watch', function () {
-  gulp.watch('src/app/**/*.*', ['npm'])
+  gulp.watch('src/app/**/*.*', ['npm'])  
 });
 
 
