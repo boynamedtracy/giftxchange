@@ -9,15 +9,21 @@ import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
 import { GoogleSigninComponent } from './google-signin/google-signin.component';
 import { PrivacyComponent } from './privacy/privacy.component';
 import { FacebookLoginResponseComponent } from './facebook-login-response/facebook-login-response.component';
+import { TwitterLoginResponseComponent } from './twitter-login-response/twitter-login-response.component';
+import { TwitterAuthComponent } from './twitter-auth/twitter-auth.component';
+import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 
 const appRoutes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'login', component: LoginComponent },
+  { path: '', component: LoginComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'gauth', component: GoogleSigninComponent },
   { path: 'confirm-email', component: ConfirmEmailComponent },
   { path: 'privacy', component: PrivacyComponent },
   { path: 'facebook-login', component: FacebookLoginResponseComponent },
+  { path: 'twitter-login', component: TwitterLoginResponseComponent },
+  { path: 'signin-twitter', component: TwitterAuthComponent },
+  { path: 'terms', component: TermsOfServiceComponent },
   { path: '**', redirectTo: '' }
 ];
 

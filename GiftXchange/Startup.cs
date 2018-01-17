@@ -97,6 +97,12 @@ namespace GiftXchange
         configureOptions.SaveToken = true;
       });
 
+      //services.AddAuthentication().AddTwitter(tOpts =>
+      //{
+      //  tOpts.ConsumerKey = Configuration["5R7Y1dJMc26yEdzFEbLWCZWKg"];
+      //  tOpts.ConsumerSecret = Configuration["Ly2vdzPf23DfYlFPruxloVT4ix93Y9hmXepngPbQWRUHMPeZZs"];
+      //});
+
       // api user claim policy
       services.AddAuthorization(options =>
       {

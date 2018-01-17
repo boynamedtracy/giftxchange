@@ -27,6 +27,8 @@ export class AuthenticationService extends BaseService {
   private _authSource = new BehaviorSubject<User>(null);
 
   private loggedIn = false;
+  private twitterRequestToken: string = "";
+  private twitterTokenSecret: string = "";
 
   constructor(private http: Http, private config: AppConfig,
     private _userService: UserService) {
@@ -96,6 +98,47 @@ export class AuthenticationService extends BaseService {
       .catch(this.handleError);
   }
 
+  twitterLogin(accessToken: string) {
+    console.log('login: ' + accessToken);
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    let body = JSON.stringify({ accessToken });
+    return this.http
+      .post(this.config.apiUrl + '/account/twitterlogin', body, { headers })
+      .map((response: Response) => {
+        // login successful if there's a jwt token in the response
+        //let user = response.json();
+        //if (user && user.token) {
+        //  // store user details and jwt token in local storage to keep user logged in between page refreshes
+        //  localStorage.setItem('currentUser', JSON.stringify(user));
+        //  this.loggedIn = true;
+        //  this._authSource.next(user);
+        //  return true;
+        //}
+      })
+      .catch(this.handleError);
+  }
+
+  twitterLoginSetup() {
+    return this.http.get(this.config.apiUrl + "/account/gettwittertoken")
+      .map((response: Response) => {
+        console.log('response from wtitter login: ' + response.json());
+        this.twitterRequestToken = response.json().oauth_token;
+        this.twitterTokenSecret = response.json().oauth_token_secret;
+        return true;
+      });
+  }
+
+  twitterAccessToken(authToken: string, authVerifier: string) {
+    return this.http.get(this.config.apiUrl + "/account/gettwitteraccess?accessToken=" + authToken + '&authVerifier=' + authVerifier)
+      .map((response: Response) => {
+        console.log('response from titter login: ' + response.json());
+        this.twitterRequestToken = response.json().oauth_token;
+        this.twitterTokenSecret = response.json().oauth_token_secret;
+        return true;
+      });
+  }
+
   logout() {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
@@ -112,5 +155,12 @@ export class AuthenticationService extends BaseService {
       return null;
     var u: User = JSON.parse(localStorage.getItem('currentUser')) as User;
     return u;
+  }
+
+  getTwitterRequestToken(): string {
+    return this.twitterRequestToken;
+  }
+  getTwitterTokenSecret(): string {
+    return this.twitterTokenSecret;
   }
 }

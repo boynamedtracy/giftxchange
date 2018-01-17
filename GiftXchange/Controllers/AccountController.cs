@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -39,6 +42,8 @@ namespace GiftXchange.Controllers
     private readonly FacebookAuthSettings _fbAuthSettings;
 
     private static readonly HttpClient Client = new HttpClient();
+
+    OAuthUtil oAuthUtil = new OAuthUtil();
 
     public AccountController(UserManager<GXUser> userManager,
       IEmailSender emailSender,
@@ -112,7 +117,8 @@ namespace GiftXchange.Controllers
 
         var result = await _userManager.CreateAsync(user, vm.password);
 
-        if (!result.Succeeded) {
+        if (!result.Succeeded)
+        {
           return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
         };
 
@@ -295,6 +301,50 @@ namespace GiftXchange.Controllers
       });
     }
 
+    [AllowAnonymous]
+    [HttpPost("twitterlogin")]
+    public async Task<IActionResult> TwitterLogin([FromBody] TwitterViewModel vm)
+    {
+
+
+
+      return Ok();
+    }
+
+
+    [AllowAnonymous]
+    [HttpGet("gettwittertoken")]
+    public async Task<IActionResult> GetTwitterToken()
+    {
+      var s = await getRequestToken();
+
+      return Ok(new
+      {
+        s.oauth_token,
+        s.oauth_token_secret,
+        s.oauth_authorize_url,
+        s.oauth_oauth_verifier
+      }
+      );
+    }
+
+    [AllowAnonymous]
+    [HttpGet("gettwitteraccess")]
+    public async Task<IActionResult> GetTwitterAccess(string accessToken, string authVerifier)
+    {
+
+      var s = await getAccessToken(accessToken, authVerifier);
+
+      return Ok(new
+      {
+        s.oauth_token,
+        s.oauth_token_secret,
+        s.oauth_authorize_url,
+        s.oauth_oauth_verifier
+      }
+      );
+    }
+
     private async Task<ClaimsIdentity> GetClaimsIdentity(string userName, string password)
     {
       if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
@@ -314,6 +364,257 @@ namespace GiftXchange.Controllers
       // Credentials are invalid, or account doesn't exist
       return await Task.FromResult<ClaimsIdentity>(null);
     }
+
+    private async Task<OAuthResponse> getRequestToken()
+    {
+      string nonce = oAuthUtil.GetNonce();
+      string timeStamp = oAuthUtil.GetTimeStamp();
+
+      string sigBaseStringParams = "oauth_consumer_key=" + "5R7Y1dJMc26yEdzFEbLWCZWKg";
+
+      sigBaseStringParams += "&" + "oauth_nonce=" + nonce;
+      sigBaseStringParams += "&" + "oauth_signature_method=" + "HMAC-SHA1";
+      sigBaseStringParams += "&" + "oauth_timestamp=" + timeStamp;
+      sigBaseStringParams += "&" + "oauth_version=1.0";
+      string sigBaseString = "POST&";
+      sigBaseString += Uri.EscapeDataString("https://api.twitter.com/oauth/request_token") + "&" + Uri.EscapeDataString(sigBaseStringParams);
+
+      byte[] content = Encoding.UTF8.GetBytes(sigBaseString);
+      HMACSHA1 hmac = new HMACSHA1(Encoding.ASCII.GetBytes("Ly2vdzPf23DfYlFPruxloVT4ix93Y9hmXepngPbQWRUHMPeZZs" + "&"));
+      hmac.ComputeHash(content);
+
+      string signature = Convert.ToBase64String(hmac.Hash);
+      signature = signature.Replace("-", "");
+
+
+      //string signature = oAuthUtil.GetSignature(sigBaseString, "Ly2vdzPf23DfYlFPruxloVT4ix93Y9hmXepngPbQWRUHMPeZZs");
+
+      var responseText = await oAuthUtil.PostData("https://api.twitter.com/oauth/request_token", sigBaseStringParams + "&oauth_signature=" + Uri.EscapeDataString(signature));
+
+      if (!string.IsNullOrEmpty(responseText))
+      {
+        string oauth_token = null;
+        string oauth_token_secret = null;
+        string oauth_authorize_url = null;
+        string oauth_oauth_verifier = null;
+        string[] keyValPairs = responseText.Split('&');
+
+        for (int i = 0; i < keyValPairs.Length; i++)
+        {
+          String[] splits = keyValPairs[i].Split('=');
+          switch (splits[0])
+          {
+            case "oauth_token":
+              oauth_token = splits[1];
+              break;
+            case "oauth_token_secret":
+              oauth_token_secret = splits[1];
+              break;
+            case "xoauth_request_auth_url":
+              oauth_authorize_url = splits[1];
+              break;
+            case "oauth_verifier":
+              oauth_oauth_verifier = splits[1];
+              break;
+          }
+        }
+
+        //requestToken.Text = oauth_token;
+        //requestTokenSecretKey.Text = oauth_token_secret;
+        //oAuthAuthorizeLink.Content = Uri.UnescapeDataString(_twitterAuthorizeUrl + "?oauth_token=" + oauth_token);
+
+        return new OAuthResponse()
+        {
+          oauth_token = oauth_token,
+          oauth_token_secret = oauth_token_secret,
+          oauth_authorize_url = oauth_authorize_url,
+          oauth_oauth_verifier = oauth_oauth_verifier
+        };
+
+      }
+
+      return null;
+    }
+
+    private async Task<OAuthResponse> getAccessToken(string authToken, string authVerifier)
+    {
+      string nonce = oAuthUtil.GetNonce();
+      string timeStamp = oAuthUtil.GetTimeStamp();
+
+      string sigBaseStringParams = "oauth_consumer_key=" + "5R7Y1dJMc26yEdzFEbLWCZWKg";
+
+      sigBaseStringParams += "&" + "oauth_nonce=" + nonce;
+      sigBaseStringParams += "&" + "oauth_signature_method=" + "HMAC-SHA1";
+      sigBaseStringParams += "&" + "oauth_timestamp=" + timeStamp;
+      sigBaseStringParams += "&" + "oauth_token=" + authToken;
+      sigBaseStringParams += "&" + "oauth_verifier=" + authVerifier;
+      sigBaseStringParams += "&" + "oauth_version=1.0";
+      string sigBaseString = "POST&";
+      sigBaseString += Uri.EscapeDataString("https://api.twitter.com/oauth/access_token") + "&" + Uri.EscapeDataString(sigBaseStringParams);
+
+      byte[] content = Encoding.UTF8.GetBytes(sigBaseString);
+      HMACSHA1 hmac = new HMACSHA1(Encoding.ASCII.GetBytes("Ly2vdzPf23DfYlFPruxloVT4ix93Y9hmXepngPbQWRUHMPeZZs" + "&"));
+      hmac.ComputeHash(content);
+
+      string signature = Convert.ToBase64String(hmac.Hash);
+      signature = signature.Replace("-", "");
+
+
+      //string signature = oAuthUtil.GetSignature(sigBaseString, "Ly2vdzPf23DfYlFPruxloVT4ix93Y9hmXepngPbQWRUHMPeZZs");
+
+      var responseText = await oAuthUtil.PostData("https://api.twitter.com/oauth/access_token", sigBaseStringParams + "&oauth_signature=" + Uri.EscapeDataString(signature));
+
+      if (!string.IsNullOrEmpty(responseText))
+      {
+        string oauth_token = null;
+        string oauth_token_secret = null;
+        string oauth_authorize_url = null;
+        string oauth_oauth_verifier = null;
+        string user_id = null;
+        string screen_name = null;
+
+        string[] keyValPairs = responseText.Split('&');
+
+        for (int i = 0; i < keyValPairs.Length; i++)
+        {
+          String[] splits = keyValPairs[i].Split('=');
+          switch (splits[0])
+          {
+            case "oauth_token":
+              oauth_token = splits[1];
+              break;
+            case "oauth_token_secret":
+              oauth_token_secret = splits[1];
+              break;
+            case "xoauth_request_auth_url":
+              oauth_authorize_url = splits[1];
+              break;
+            case "oauth_verifier":
+              oauth_oauth_verifier = splits[1];
+              break;
+            case "user_id":
+              user_id = splits[1];
+              break;
+            case "screen_name":
+              screen_name = splits[1];
+              break;
+          }
+        }
+
+        //requestToken.Text = oauth_token;
+        //requestTokenSecretKey.Text = oauth_token_secret;
+        //oAuthAuthorizeLink.Content = Uri.UnescapeDataString(_twitterAuthorizeUrl + "?oauth_token=" + oauth_token);
+
+        var oa = new OAuthResponse();
+
+        if (oauth_token != null && oauth_token_secret != null)
+        {
+
+          var credentialsText = Verify_Credentials("5R7Y1dJMc26yEdzFEbLWCZWKg", "Ly2vdzPf23DfYlFPruxloVT4ix93Y9hmXepngPbQWRUHMPeZZs", oauth_token, oauth_token_secret);
+
+        }
+
+        return oa;
+
+      }
+
+      return null;
+    }
+
+    private string Verify_Credentials(string oauthconsumerkey, string oauthconsumersecret, string oauthtoken, string oauthtokensecret)
+    {
+      string oauthsignaturemethod = "HMAC-SHA1";
+      string oauthversion = "1.0";
+      string oauthnonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
+      TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+      string oauthtimestamp = Convert.ToInt64(ts.TotalSeconds).ToString();
+      SortedDictionary<string, string> basestringParameters = new SortedDictionary<string, string>();
+      basestringParameters.Add("oauth_version", "1.0");
+      basestringParameters.Add("oauth_consumer_key", oauthconsumerkey);
+      basestringParameters.Add("oauth_nonce", oauthnonce);
+      basestringParameters.Add("oauth_signature_method", "HMAC-SHA1");
+      basestringParameters.Add("oauth_timestamp", oauthtimestamp);
+      basestringParameters.Add("oauth_token", oauthtoken);
+      //GS - Build the signature string
+      StringBuilder baseString = new StringBuilder();
+      baseString.Append("GET" + "&");
+      baseString.Append(EncodeCharacters(Uri.EscapeDataString("https://api.twitter.com/1.1/account/verify_credentials.json") + "&"));
+      foreach (KeyValuePair<string, string> entry in basestringParameters)
+      {
+        baseString.Append(EncodeCharacters(Uri.EscapeDataString(entry.Key + "=" + entry.Value + "&")));
+      }
+
+      //Since the baseString is urlEncoded we have to remove the last 3 chars - %26
+      string finalBaseString = baseString.ToString().Substring(0, baseString.Length - 3);
+
+      //Build the signing key
+      string signingKey = EncodeCharacters(Uri.EscapeDataString(oauthconsumersecret)) + "&" +
+      EncodeCharacters(Uri.EscapeDataString(oauthtokensecret));
+
+      //Sign the request
+      HMACSHA1 hasher = new HMACSHA1(new ASCIIEncoding().GetBytes(signingKey));
+      string oauthsignature = Convert.ToBase64String(hasher.ComputeHash(new ASCIIEncoding().GetBytes(finalBaseString)));
+      string responseFromServer = string.Empty;
+      //Tell Twitter we don't do the 100 continue thing
+      ServicePointManager.Expect100Continue = false;
+
+      //authorization header
+      HttpWebRequest hwr = (HttpWebRequest)WebRequest.Create(
+        @"https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true");
+      StringBuilder authorizationHeaderParams = new StringBuilder();
+      authorizationHeaderParams.Append("OAuth ");
+      //authorizationHeaderParams.Append("include_email=" + "\"" + "true" + "\",");
+      authorizationHeaderParams.Append("oauth_nonce=" + "\"" + Uri.EscapeDataString(oauthnonce) + "\",");
+      authorizationHeaderParams.Append("oauth_signature_method=" + "\"" + Uri.EscapeDataString(oauthsignaturemethod) + "\",");
+      authorizationHeaderParams.Append("oauth_timestamp=" + "\"" + Uri.EscapeDataString(oauthtimestamp) + "\",");
+      authorizationHeaderParams.Append("oauth_consumer_key=" + "\"" + Uri.EscapeDataString(oauthconsumerkey) + "\",");
+      if (!string.IsNullOrEmpty(oauthtoken))
+        authorizationHeaderParams.Append("oauth_token=" + "\"" + Uri.EscapeDataString(oauthtoken) + "\",");
+      authorizationHeaderParams.Append("oauth_signature=" + "\"" + Uri.EscapeDataString(oauthsignature) + "\",");
+      authorizationHeaderParams.Append("oauth_version=" + "\"" + Uri.EscapeDataString(oauthversion) + "\"");
+      hwr.Headers.Add("Authorization", authorizationHeaderParams.ToString());
+      hwr.Method = "GET";
+      hwr.ContentType = "application/x-www-form-urlencoded";
+
+      //Allow us a reasonable timeout in case Twitter's busy
+      hwr.Timeout = 3 * 60 * 1000;
+      try
+      {
+        //  hwr.Proxy = new WebProxy("enter proxy details/address");
+        HttpWebResponse rsp = hwr.GetResponse() as HttpWebResponse;
+        Stream dataStream = rsp.GetResponseStream();
+        //Open the stream using a StreamReader for easy access.
+        StreamReader reader = new StreamReader(dataStream);
+        //Read the content.
+        responseFromServer = reader.ReadToEnd();
+      }
+      catch (Exception ex)
+      {
+
+      }
+      return responseFromServer;
+    }
+
+    private string EncodeCharacters(string data)
+    {
+      //as per OAuth Core 1.0 Characters in the unreserved character set MUST NOT be encoded
+      //unreserved = ALPHA, DIGIT, '-', '.', '_', '~'
+      if (data.Contains("!"))
+        data = data.Replace("!", "%21");
+      if (data.Contains("'"))
+        data = data.Replace("'", "%27");
+      if (data.Contains("("))
+        data = data.Replace("(", "%28");
+      if (data.Contains(")"))
+        data = data.Replace(")", "%29");
+      if (data.Contains("*"))
+        data = data.Replace("*", "%2A");
+      if (data.Contains(","))
+        data = data.Replace(",", "%2C");
+
+      return data;
+    }
+
 
 
   }

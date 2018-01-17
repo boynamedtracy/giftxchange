@@ -21,6 +21,9 @@ import { GoogleSigninComponent } from './google-signin/google-signin.component';
 import { PrivacyComponent } from './privacy/privacy.component';
 import { FacebookSigninComponent } from './facebook-signin/facebook-signin.component';
 import { FacebookLoginResponseComponent } from './facebook-login-response/facebook-login-response.component';
+import { TwitterLoginResponseComponent } from './twitter-login-response/twitter-login-response.component';
+import { TwitterAuthComponent } from './twitter-auth/twitter-auth.component';
+import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 
 
 @NgModule({
@@ -35,6 +38,9 @@ import { FacebookLoginResponseComponent } from './facebook-login-response/facebo
     PrivacyComponent,
     FacebookSigninComponent,
     FacebookLoginResponseComponent,
+    TwitterLoginResponseComponent,
+    TwitterAuthComponent,
+    TermsOfServiceComponent,
   ],
   imports: [
     BrowserModule,
