@@ -12,10 +12,11 @@ import { FacebookLoginResponseComponent } from './facebook-login-response/facebo
 import { TwitterLoginResponseComponent } from './twitter-login-response/twitter-login-response.component';
 import { TwitterAuthComponent } from './twitter-auth/twitter-auth.component';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
+import { AuthGuard } from './_guards/auth.guard';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent },
-  { path: 'home', component: HomeComponent },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'register', component: RegisterComponent },
   { path: 'gauth', component: GoogleSigninComponent },
   { path: 'confirm-email', component: ConfirmEmailComponent },

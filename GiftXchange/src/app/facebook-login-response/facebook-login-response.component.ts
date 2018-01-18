@@ -19,9 +19,9 @@ export class FacebookLoginResponseComponent implements OnInit {
   constructor(private route: ActivatedRoute, private alertService: AlertService, private router: Router, private http: Http,
     private authService: AuthenticationService) {
 
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
 
-    console.log('constructor');
+    //console.log('constructor');
     this.accessToken = this.getParameterByName("access_token", window.location.href);
 
     if (this.accessToken != '') {

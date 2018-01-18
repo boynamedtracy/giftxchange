@@ -15,45 +15,49 @@ export class TwitterAuthComponent implements OnInit {
 
   authToken: string = '';
   authVerifier: string = '';
+  authSecret: string = '';
 
 
   constructor(private route: ActivatedRoute, private alertService: AlertService, private router: Router, private http: Http,
     private authService: AuthenticationService) {
 
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
 
     this.authToken = this.getParameterByName('oauth_token', window.location.href);
     this.authVerifier = this.getParameterByName('oauth_verifier', window.location.href);
-
-    alert('token: ' + this.authToken);
+    this.authSecret = '';
 
     if (this.authToken != '' && this.authVerifier != null) {
       this.authService.twitterAccessToken(this.authToken, this.authVerifier).
         subscribe(
         data => {
-          console.log('success! ' + data);
-        },
-        error => {
-          console.log('error' + error);
-        }
-        );
-    }
-
-    if (this.authToken != '') {
-      this.authService.twitterLogin(this.authToken)
-        .subscribe(
-        data => {
+          //console.log('success! ' + data);
           if (data == true) {
             window.opener.document.location.href = this.returnUrl;
-            //window.parent.focus();
             window.close();
           }
         },
         error => {
-          this.alertService.error('There was an error: ' + error, false);
+          this.alertService.error('there was an error logging in: ' + error);
         }
         );
     }
+
+    //if (this.authToken != '') {
+    //  this.authService.twitterLogin(this.authToken)
+    //    .subscribe(
+    //    data => {
+    //      if (data == true) {
+    //        window.opener.document.location.href = this.returnUrl;
+    //        //window.parent.focus();
+    //        window.close();
+    //      }
+    //    },
+    //    error => {
+    //      this.alertService.error('There was an error: ' + error, false);
+    //    }
+    //    );
+    //}
 
 
   }

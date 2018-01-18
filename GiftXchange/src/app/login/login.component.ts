@@ -5,6 +5,7 @@ import { AlertService, AuthenticationService } from '../_services/index';
 import { LoginViewModel } from '../_models/login.viewmodel';
 import { GoogleSigninComponent } from '../google-signin/google-signin.component';
 import { FacebookSigninComponent } from '../facebook-signin/facebook-signin.component';
+import { TwitterLoginResponseComponent } from '../twitter-login-response/twitter-login-response.component';
 
 @Component({
   selector: 'app-login',
@@ -21,18 +22,24 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
-    private alertService: AlertService) { }
+    private alertService: AlertService) {
+
+    // get return url from route parameters or default to '/'
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+
+    console.log('constructor: ' + this.authenticationService.isLoggedIn());
+
+    if (this.authenticationService.isLoggedIn) {
+      this.router.navigate([this.returnUrl]);
+    }
+
+  }
 
   ngOnInit() {
     // reset login status
     //this.authenticationService.logout();    
 
-    // get return url from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
-    if (this.authenticationService.isLoggedIn) {
-      this.router.navigate([this.returnUrl]);
-    }
 
   }
 

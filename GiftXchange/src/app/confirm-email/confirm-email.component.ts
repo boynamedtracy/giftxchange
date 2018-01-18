@@ -27,8 +27,8 @@ export class ConfirmEmailComponent implements OnInit {
       this.code = params['code'];
     });
 
-    console.log('userId: ' + this.userId);
-    console.log('code: ' + this.code);
+    //console.log('userId: ' + this.userId);
+    //console.log('code: ' + this.code);
 
     if (this.userId && this.code) {
       this.userService.confirmEmail(this.userId, this.code).

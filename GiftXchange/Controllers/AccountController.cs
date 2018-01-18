@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -306,6 +307,59 @@ namespace GiftXchange.Controllers
     public async Task<IActionResult> TwitterLogin([FromBody] TwitterViewModel vm)
     {
 
+      var s = await getAccessToken(vm.AccessToken, vm.AuthSecret);
+
+      if (s == null)
+      {
+        return BadRequest("Twitter login failed");
+      }
+
+      var user = await _userManager.FindByEmailAsync(s.email);
+      string password = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Substring(0, 8);
+
+      if (user == null)
+      {
+        var u = new GXUser()
+        {
+          Email = s.email,
+          UserName = s.email,
+          googleId = "",
+          photoUrl = s.profile_image_url_https,
+          firstName = s.name,
+          lastName = "",
+          gender = "",
+          dateJoined = DateTime.Now
+        };
+
+        var result = await _userManager.CreateAsync(u, password);
+        if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
+
+        user = await _userManager.FindByEmailAsync(s.email);
+
+      }
+      else
+      {
+        user.twitterId = s.id_str;
+        user.photoUrl = s.profile_image_url_https;
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+      }
+
+      var identity = await Task.FromResult(_jwtFactory.GenerateClaimsIdentity(user.UserName, user.Id));
+      var jwt = await Tokens.GenerateJwt(identity, _jwtFactory, user.UserName, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
+
+
+      return Ok(new
+      {
+        Id = user.Id,
+        userName = user.UserName,
+        firstName = user.firstName,
+        lastName = user.lastName,
+        email = user.Email,
+        facebookId = user.facebookId,
+        photoUrl = user.photoUrl,
+        token = jwt
+      });
 
 
       return Ok();
@@ -328,6 +382,7 @@ namespace GiftXchange.Controllers
       );
     }
 
+    //I think i can delete this
     [AllowAnonymous]
     [HttpGet("gettwitteraccess")]
     public async Task<IActionResult> GetTwitterAccess(string accessToken, string authVerifier)
@@ -335,14 +390,59 @@ namespace GiftXchange.Controllers
 
       var s = await getAccessToken(accessToken, authVerifier);
 
+      if (s == null)
+      {
+        return BadRequest("Twitter login failed");
+      }
+
+      var user = await _userManager.FindByEmailAsync(s.email);
+      string password = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Substring(0, 8);
+
+      if (user == null)
+      {
+        var u = new GXUser()
+        {
+          Email = s.email,
+          UserName = s.email,
+          googleId = "",
+          photoUrl = s.profile_image_url_https,
+          firstName = s.name,
+          lastName = "",
+          gender = "",
+          dateJoined = DateTime.Now
+        };
+
+        var result = await _userManager.CreateAsync(u, password);
+        if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
+
+        user = await _userManager.FindByEmailAsync(s.email);
+
+      }
+      else
+      {
+        user.twitterId = s.id_str;
+        user.photoUrl = s.profile_image_url_https;
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+      }
+
+      var identity = await Task.FromResult(_jwtFactory.GenerateClaimsIdentity(user.UserName, user.Id));
+      var jwt = await Tokens.GenerateJwt(identity, _jwtFactory, user.UserName, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
+
+
       return Ok(new
       {
-        s.oauth_token,
-        s.oauth_token_secret,
-        s.oauth_authorize_url,
-        s.oauth_oauth_verifier
-      }
-      );
+        Id = user.Id,
+        userName = user.UserName,
+        firstName = user.firstName,
+        lastName = user.lastName,
+        email = user.Email,
+        facebookId = user.facebookId,
+        photoUrl = user.photoUrl,
+        token = jwt
+      });
+
+
     }
 
     private async Task<ClaimsIdentity> GetClaimsIdentity(string userName, string password)
@@ -436,8 +536,13 @@ namespace GiftXchange.Controllers
       return null;
     }
 
-    private async Task<OAuthResponse> getAccessToken(string authToken, string authVerifier)
+    private async Task<TwitterUserModel> getAccessToken(string authToken, string authVerifier)
     {
+
+      GXUser user = null;
+      TwitterUserModel twUser = null;
+      string jwt = "";
+
       string nonce = oAuthUtil.GetNonce();
       string timeStamp = oAuthUtil.GetTimeStamp();
 
@@ -510,89 +615,55 @@ namespace GiftXchange.Controllers
         if (oauth_token != null && oauth_token_secret != null)
         {
 
-          var credentialsText = Verify_Credentials("5R7Y1dJMc26yEdzFEbLWCZWKg", "Ly2vdzPf23DfYlFPruxloVT4ix93Y9hmXepngPbQWRUHMPeZZs", oauth_token, oauth_token_secret);
+          //var credentialsText = Verify_Credentials("5R7Y1dJMc26yEdzFEbLWCZWKg", "Ly2vdzPf23DfYlFPruxloVT4ix93Y9hmXepngPbQWRUHMPeZZs", oauth_token, oauth_token_secret);
+          var credentialsText = GetTwitterUser("5R7Y1dJMc26yEdzFEbLWCZWKg",
+            "Ly2vdzPf23DfYlFPruxloVT4ix93Y9hmXepngPbQWRUHMPeZZs", oauth_token, oauth_token_secret);
+          if (credentialsText.IndexOf("Error:") < 0 && !string.IsNullOrEmpty(credentialsText))
+          {
+            try
+            {
+              twUser = JsonConvert.DeserializeObject<TwitterUserModel>(credentialsText);
+            }catch (Exception ex)
+            {
+              return null;
+            }
+            
 
+          }
         }
 
-        return oa;
 
       }
 
-      return null;
+      return twUser;
     }
 
-    private string Verify_Credentials(string oauthconsumerkey, string oauthconsumersecret, string oauthtoken, string oauthtokensecret)
+    public string GetTwitterUser(string ConsumerKey, string ConsumerSecret, string auth_token, string auth_secret)
     {
-      string oauthsignaturemethod = "HMAC-SHA1";
-      string oauthversion = "1.0";
-      string oauthnonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
+      // see all comments from GenerateTokenUrl as they apply here as well
+      string Nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
       TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-      string oauthtimestamp = Convert.ToInt64(ts.TotalSeconds).ToString();
-      SortedDictionary<string, string> basestringParameters = new SortedDictionary<string, string>();
-      basestringParameters.Add("oauth_version", "1.0");
-      basestringParameters.Add("oauth_consumer_key", oauthconsumerkey);
-      basestringParameters.Add("oauth_nonce", oauthnonce);
-      basestringParameters.Add("oauth_signature_method", "HMAC-SHA1");
-      basestringParameters.Add("oauth_timestamp", oauthtimestamp);
-      basestringParameters.Add("oauth_token", oauthtoken);
-      //GS - Build the signature string
-      StringBuilder baseString = new StringBuilder();
-      baseString.Append("GET" + "&");
-      baseString.Append(EncodeCharacters(Uri.EscapeDataString("https://api.twitter.com/1.1/account/verify_credentials.json") + "&"));
-      foreach (KeyValuePair<string, string> entry in basestringParameters)
+      string timestamp = Convert.ToInt64(ts.TotalSeconds).ToString();
+      TwitterUrls TwitterUrls = new TwitterUrls("https://api.twitter.com/1.1/account/verify_credentials.json");
+      List<KeyValuePair<string, string>> Parameters = new List<KeyValuePair<string, string>>();
+      Parameters.Add(new KeyValuePair<string, string>("include_email", "true"));
+      Parameters.Add(new KeyValuePair<string, string>("oauth_consumer_key", ConsumerKey));
+      Parameters.Add(new KeyValuePair<string, string>("oauth_nonce", Nonce));
+      Parameters.Add(new KeyValuePair<string, string>("oauth_signature_method", "HMAC-SHA1"));
+      Parameters.Add(new KeyValuePair<string, string>("oauth_timestamp", timestamp));
+      Parameters.Add(new KeyValuePair<string, string>("oauth_token", auth_token));
+      Parameters.Add(new KeyValuePair<string, string>("oauth_version", "1.0"));
+      string signature = TwitterUrls.GenerateSignature(ConsumerSecret, Parameters, auth_secret);
+      Parameters.Insert(3, new KeyValuePair<string, string>("oauth_signature", signature));
+
+      string retVal = string.Empty;
+
+      string url = TwitterUrls.GenerateCallingUrls(Parameters);
+      using (WebClient client = new WebClient())
       {
-        baseString.Append(EncodeCharacters(Uri.EscapeDataString(entry.Key + "=" + entry.Value + "&")));
+        retVal = client.DownloadString(url);
       }
-
-      //Since the baseString is urlEncoded we have to remove the last 3 chars - %26
-      string finalBaseString = baseString.ToString().Substring(0, baseString.Length - 3);
-
-      //Build the signing key
-      string signingKey = EncodeCharacters(Uri.EscapeDataString(oauthconsumersecret)) + "&" +
-      EncodeCharacters(Uri.EscapeDataString(oauthtokensecret));
-
-      //Sign the request
-      HMACSHA1 hasher = new HMACSHA1(new ASCIIEncoding().GetBytes(signingKey));
-      string oauthsignature = Convert.ToBase64String(hasher.ComputeHash(new ASCIIEncoding().GetBytes(finalBaseString)));
-      string responseFromServer = string.Empty;
-      //Tell Twitter we don't do the 100 continue thing
-      ServicePointManager.Expect100Continue = false;
-
-      //authorization header
-      HttpWebRequest hwr = (HttpWebRequest)WebRequest.Create(
-        @"https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true");
-      StringBuilder authorizationHeaderParams = new StringBuilder();
-      authorizationHeaderParams.Append("OAuth ");
-      //authorizationHeaderParams.Append("include_email=" + "\"" + "true" + "\",");
-      authorizationHeaderParams.Append("oauth_nonce=" + "\"" + Uri.EscapeDataString(oauthnonce) + "\",");
-      authorizationHeaderParams.Append("oauth_signature_method=" + "\"" + Uri.EscapeDataString(oauthsignaturemethod) + "\",");
-      authorizationHeaderParams.Append("oauth_timestamp=" + "\"" + Uri.EscapeDataString(oauthtimestamp) + "\",");
-      authorizationHeaderParams.Append("oauth_consumer_key=" + "\"" + Uri.EscapeDataString(oauthconsumerkey) + "\",");
-      if (!string.IsNullOrEmpty(oauthtoken))
-        authorizationHeaderParams.Append("oauth_token=" + "\"" + Uri.EscapeDataString(oauthtoken) + "\",");
-      authorizationHeaderParams.Append("oauth_signature=" + "\"" + Uri.EscapeDataString(oauthsignature) + "\",");
-      authorizationHeaderParams.Append("oauth_version=" + "\"" + Uri.EscapeDataString(oauthversion) + "\"");
-      hwr.Headers.Add("Authorization", authorizationHeaderParams.ToString());
-      hwr.Method = "GET";
-      hwr.ContentType = "application/x-www-form-urlencoded";
-
-      //Allow us a reasonable timeout in case Twitter's busy
-      hwr.Timeout = 3 * 60 * 1000;
-      try
-      {
-        //  hwr.Proxy = new WebProxy("enter proxy details/address");
-        HttpWebResponse rsp = hwr.GetResponse() as HttpWebResponse;
-        Stream dataStream = rsp.GetResponseStream();
-        //Open the stream using a StreamReader for easy access.
-        StreamReader reader = new StreamReader(dataStream);
-        //Read the content.
-        responseFromServer = reader.ReadToEnd();
-      }
-      catch (Exception ex)
-      {
-
-      }
-      return responseFromServer;
+      return retVal;
     }
 
     private string EncodeCharacters(string data)

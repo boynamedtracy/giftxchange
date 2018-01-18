@@ -98,14 +98,15 @@ export class AuthenticationService extends BaseService {
       .catch(this.handleError);
   }
 
-  twitterLogin(accessToken: string) {
+  twitterLogin(accessToken: string, authSecret: string) {
     console.log('login: ' + accessToken);
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    let body = JSON.stringify({ accessToken });
+    let body = JSON.stringify({ accessToken, authSecret });
     return this.http
       .post(this.config.apiUrl + '/account/twitterlogin', body, { headers })
       .map((response: Response) => {
+        alert(response.json());
         // login successful if there's a jwt token in the response
         //let user = response.json();
         //if (user && user.token) {
@@ -132,9 +133,19 @@ export class AuthenticationService extends BaseService {
   twitterAccessToken(authToken: string, authVerifier: string) {
     return this.http.get(this.config.apiUrl + "/account/gettwitteraccess?accessToken=" + authToken + '&authVerifier=' + authVerifier)
       .map((response: Response) => {
-        console.log('response from titter login: ' + response.json());
-        this.twitterRequestToken = response.json().oauth_token;
-        this.twitterTokenSecret = response.json().oauth_token_secret;
+        
+        console.log('response from twitterAccessToken: ' + response.json());
+        //this.twitterRequestToken = response.json().oauth_token;
+        //this.twitterTokenSecret = response.json().oauth_token_secret;
+        let user = response.json();
+        alert('user: ' + user);
+        if (user && user.token) {
+          // store user details and jwt token in local storage to keep user logged in between page refreshes
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.loggedIn = true;
+          this._authSource.next(user);
+          return true;
+        }
         return true;
       });
   }

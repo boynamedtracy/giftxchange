@@ -6,7 +6,7 @@ import { AppConfig } from '../app.config';
 declare var window: any;
 
 @Component({
-  selector: 'app-twitter-login-response',
+  selector: 'twitter-login',
   templateUrl: './twitter-login-response.component.html',
   styleUrls: ['./twitter-login-response.component.scss']
 })

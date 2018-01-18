@@ -1,4 +1,7 @@
-<p class="lead" *ngIf="currentUser != null">Hi {{currentUser.firstName}}! <a href="javascript:;" (click)="logout()">Logout</a></p>
+<div *ngIf="currentUser != null">
+  <div *ngIf="currentUser.photoUrl"><img [src]="currentUser.photoUrl" alt="My profile pic" class="img-thumbnail"/></div>
+  Hi {{currentUser.firstName}}! <a href="javascript:;" (click)="logout()">Logout</a>
+</div>
 <div *ngIf="currentUser == null">
   <p>You are not currently logged in. <a [routerLink]="['/login']">Click here to login</a>. Don't have an account? <a [routerLink]="['/register']">Click here to register</a>
  </p></div>

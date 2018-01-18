@@ -9,5 +9,6 @@ namespace GiftXchange.ViewModels.Account
   {
     public string AccessToken { get; set; }
     public string AuthVerifier { get; set; }
+    public string AuthSecret { get; set; }
   }
 }
