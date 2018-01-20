@@ -1,0 +1,270 @@
+.content-form {
+  position: relative;
+  overflow: hidden;
+  margin-right: rem-calc(-27px);
+  margin-left: rem-calc(-27px);
+
+  .form-header,
+  .form-footer {
+    padding-right: rem-calc(27px);
+    padding-left: rem-calc(27px);
+
+    p:empty {
+      margin: 0;
+    }
+  }
+
+  .form-footer {
+    margin-top: rem-calc(30px);
+  }
+
+  .validation-summary {
+    display: none;
+  }
+
+  fieldset {
+    border: 0;
+    margin: rem-calc(0 0 30px 0);
+    padding: 0;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  label {
+    position: relative;
+    display: inline-block;
+    clear: both;
+  }
+
+  input[type='text'],
+  input[type='password'],
+  input[type='date'],
+  input[type='datetime'],
+  input[type='datetime-local'],
+  input[type='month'],
+  input[type='week'],
+  input[type='email'],
+  input[type='number'],
+  input[type='search'],
+  input[type='tel'],
+  input[type='time'],
+  input[type='url'],
+  textarea,
+  select {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: rem-calc(0 0 30px 0);
+    appearance: none;
+
+    &:active,
+    &:focus {
+      outline: 0;
+    }
+  }
+
+  textarea {
+    height: auto;
+    min-height: rem-calc(120px);
+  }
+
+  .error-msg {
+    position: relative;
+    top: rem-calc(-30px);
+    max-width: 100%;
+    margin-top: 0;
+    color: red;
+  }
+
+  .required {
+    label:after {
+      position: relative;
+      top: -7px;
+      margin-left: 2px;
+      content: '\f069';
+      text-decoration: inherit;
+      font-family: FontAwesome;
+      font-size: rem-calc(6px);
+      font-weight: normal;
+      font-style: normal;
+    }
+  }
+
+  input[type='submit'] {
+    margin-left: rem-calc(27px);
+    border: 0;
+  }
+  /* small screens */
+  .sm-full {
+    float: left;
+    clear: none;
+    width: 100%;
+    padding-right: rem-calc(27px);
+    padding-left: rem-calc(27px);
+  }
+
+  .sm-half {
+    float: left;
+    clear: none;
+    width: 50%;
+    padding-right: rem-calc(27px);
+    padding-left: rem-calc(27px);
+  }
+
+  .sm-third {
+    float: left;
+    clear: none;
+    width: 33.333%;
+    padding-right: rem-calc(27px);
+    padding-left: rem-calc(27px);
+  }
+
+  .sm-two-thirds {
+    float: left;
+    clear: none;
+    width: 66.666%;
+    padding-right: rem-calc(27px);
+    padding-left: rem-calc(27px);
+  }
+
+  .sm-quarter {
+    float: left;
+    clear: none;
+    width: 25%;
+    padding-right: rem-calc(27px);
+    padding-left: rem-calc(27px);
+  }
+
+  .sm-three-quarters {
+    float: left;
+    clear: none;
+    width: 75%;
+    padding-right: rem-calc(27px);
+    padding-left: rem-calc(27px);
+  }
+
+  .sm-last + div {
+    clear: both;
+  }
+  /* medium screens */
+  @media screen and (min-width: 40rem) {
+    .sm-last + div {
+      clear: none;
+    }
+
+    .md-full {
+      float: left;
+      clear: none;
+      width: 100%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .md-half {
+      float: left;
+      clear: none;
+      width: 50%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .md-third {
+      float: left;
+      clear: none;
+      width: 33.333%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .md-two-thirds {
+      float: left;
+      clear: none;
+      width: 66.666%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .md-quarter {
+      float: left;
+      clear: none;
+      width: 25%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .md-three-quarters {
+      float: left;
+      clear: none;
+      width: 75%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .md-last + div {
+      clear: both;
+    }
+  }
+  /* large screens */
+  @media screen and (min-width: 64rem) {
+    .sm-last + div {
+      clear: none;
+    }
+
+    .md-last + div {
+      clear: none;
+    }
+
+    .lg-full {
+      float: left;
+      clear: none;
+      width: 100%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .lg-half {
+      float: left;
+      clear: none;
+      width: 50%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .lg-third {
+      float: left;
+      clear: none;
+      width: 33.333%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .lg-two-thirds {
+      float: left;
+      clear: none;
+      width: 66.666%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .lg-quarter {
+      float: left;
+      clear: none;
+      width: 25%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .lg-three-quarters {
+      clear: none;
+      width: 75%;
+      padding-right: rem-calc(27px);
+      padding-left: rem-calc(27px);
+    }
+
+    .lg-last + div {
+      clear: both;
+    }
+  }
+}

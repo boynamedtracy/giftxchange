@@ -1,7 +1,38 @@
-<div *ngIf="currentUser != null">
-  <div *ngIf="currentUser.photoUrl"><img [src]="currentUser.photoUrl" alt="My profile pic" class="img-thumbnail"/></div>
-  Hi {{currentUser.firstName}}! <a href="javascript:;" (click)="logout()">Logout</a>
+
+<div class="page-container" id="home">
+
+  <header id="profileHeader">
+    <div class="container">
+      <div class="row justify-content-end">
+        <div class="col col-md-3">
+          <div *ngIf="currentUser != null">
+            <div *ngIf="currentUser.photoUrl"><img [src]="currentUser.photoUrl" alt="My profile pic" class="img-thumbnail" /></div>
+            Hi {{currentUser.firstName}}! <a href="javascript:;" (click)="logout()">Logout</a>
+          </div>
+          <div *ngIf="currentUser == null">
+            <p>
+              You are not currently logged in. <a [routerLink]="['/login']">Click here to login</a>. Don't have an account? <a [routerLink]="['/register']">Click here to register</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <h2>Home</h2>
+
+  <div class="container">
+    <div class="row">
+      <div class="col col-md-8">
+        <h3>Groups go here</h3>
+      </div>
+      <div class="col col-md-4">
+        <h3>Lists go here</h3>
+      </div>
+    </div>
+  </div>
+
+
 </div>
-<div *ngIf="currentUser == null">
-  <p>You are not currently logged in. <a [routerLink]="['/login']">Click here to login</a>. Don't have an account? <a [routerLink]="['/register']">Click here to register</a>
- </p></div>
+
+<footer-reveal-button></footer-reveal-button>

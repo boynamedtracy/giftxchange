@@ -1,0 +1,45 @@
+#footerReveal {
+	position: absolute;
+	bottom: 10px;
+	height: 35px;
+	width: 100%;
+	z-index: 100;
+
+	.btn-more {
+		background: none;
+		color: $color-fruitbasket;
+		&:hover {
+			color: theme-color-level(fruity, 1);
+		}
+		&:focus, &:active {
+			border: none;
+			box-shadow: none;
+			color: $color-fruitbasket;
+		}
+
+		.fa-chevron-up {
+			display: none;
+		}
+
+		&.up {
+			.fa-chevron-down {
+				display: none;
+			}
+			.fa-chevron-up {
+				display: inline-block;
+			}
+		}
+	}
+
+}
+
+#footer {
+	width: 100%;
+	height: 400px;
+	position: fixed;
+	bottom: 0;
+	z-index: -1;
+	color: $color-pa;
+	background-color: $color-carmel;		
+	box-shadow: inset 0 0 30px theme-color-level(carmel, 5);
+}

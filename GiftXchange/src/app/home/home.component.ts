@@ -4,6 +4,7 @@ import { Router, ActivatedRoute, RouterState } from '@angular/router';
 import { User } from '../_models/user.model';
 import { AuthenticationService } from '../_services/index';
 
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',

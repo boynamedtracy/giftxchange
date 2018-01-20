@@ -1,0 +1,198 @@
+.debug {
+	position: fixed;
+	z-index: 1000;
+	top: 0;
+	left: 0;
+	width: 35px;
+	padding: 5px;
+	text-align: center;
+	background: $color-carmel;
+}
+
+.inner {
+	padding: 1.5rem;
+}
+
+.btn {
+	cursor: hand;
+	cursor: pointer;
+}
+
+.btn-primary {			
+	color: $color-rudolphsnose;	
+	font-family: 'Lobster', cursive;
+	font-size: 1.25rem;
+	padding: 0.175rem 1.5rem;
+	&:hover {
+		color: $color-fruitbasket;
+	}
+}
+.btn-social {
+	padding: 0;
+	height: 2.5rem;
+	width: 2.5rem;
+	text-align: center;
+	margin-right: .25rem;
+	&:last-child {
+		margin-right: 0;
+	}
+}
+
+.form-control, .form-control:focus {
+	background: $color-fruitbasket;
+	color: $color-pa !important;
+	font-family: 'PT Sans';
+	border: 1px solid $color-fruitbasket;
+	@include placeholder {
+		color: $color-spiraling;
+	}
+}
+
+.login-container {
+	position: relative;
+	z-index: 100;
+	@include centerer(true, true);
+
+	.login-logo-container {
+		position: absolute;
+		width: 300px;
+		height: 133px;
+		right: 60px;
+
+		@include centerer(false, true);
+
+		overflow: hidden;	
+		h1.site-title {
+			font-size: 1rem;
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			text-indent: -1000px;
+			overflow: hidden;
+			background: transparent url(/assets/images/giftxchange-logo.svg) no-repeat;
+			background-size: cover;
+		}
+	}
+
+	.login-form-container {
+		border-left: 1px solid $color-pa;
+		padding: 30px 0 30px 60px;
+
+		.login-form {
+			padding: 0 30px;
+		}
+
+		.login-social-buttons {
+			padding: 0 30px;
+			text-align: center;
+		}
+
+		.login-social-divider {
+			padding: 1.75rem 0;
+			position: relative;
+
+			// .bg {
+			// 	position: absolute;
+			// 	z-index: 0;
+
+			// 	@include centerer(false, true);
+
+			// 	-webkit-box-sizing: content-box;
+			// 	-moz-box-sizing: content-box;
+			// 	box-sizing: content-box;
+			// 	width: 100%;
+			// 	height: 14px;
+			// 	border: none;
+			// 	font: normal 100%/normal Arial, Helvetica, sans-serif;
+			// 	color: #eebd85;
+			// 	-o-text-overflow: clip;
+			// 	text-overflow: clip;
+			// 	background: -webkit-radial-gradient(circle, #eebd85 0, #eebd85 15%, rgba(0, 0, 0, 0) 16%, rgba(0,0,0,0) 100%);
+			// 	background: -moz-radial-gradient(circle, #eebd85 0, #eebd85 15%, rgba(0, 0, 0, 0) 16%, rgba(0,0,0,0) 100%);
+			// 	background: radial-gradient(circle, #eebd85 0, #eebd85 15%, rgba(0, 0, 0, 0) 16%, rgba(0,0,0,0) 100%);
+			// 	-webkit-background-origin: padding-box;
+			// 	background-origin: padding-box;
+			// 	-webkit-background-clip: border-box;
+			// 	background-clip: border-box;
+			// 	-webkit-background-size: 20px 15px;
+			// 	background-size: 20px 15px;
+
+			// }
+
+			span {
+				position: absolute;
+				@include centerer(true, true);
+				z-index: 2;
+				font-size: 1em;
+				text-align: center;
+				font-family: 'PT Sans';
+				background: transparent;
+				padding: .25rem 1rem;
+				display: inline-block;
+
+				&::before {
+					@include centerer(false, true);
+					content: '';
+					box-sizing: content-box;
+					width: 100%;
+					height: 14px;
+
+					left: -100%;
+
+					border: none;
+					font: normal 100%/normal Arial, Helvetica, sans-serif;
+					color: #eebd85;
+					-o-text-overflow: clip;
+					text-overflow: clip;
+					background: -webkit-radial-gradient(circle, #eebd85 0, #eebd85 15%, rgba(0, 0, 0, 0) 16%, rgba(0,0,0,0) 100%);
+					background: -moz-radial-gradient(circle, #eebd85 0, #eebd85 15%, rgba(0, 0, 0, 0) 16%, rgba(0,0,0,0) 100%);
+					background: radial-gradient(circle, #eebd85 0, #eebd85 15%, rgba(0, 0, 0, 0) 16%, rgba(0,0,0,0) 100%);
+					-webkit-background-origin: padding-box;
+					background-origin: padding-box;
+					-webkit-background-clip: border-box;
+					background-clip: border-box;
+					-webkit-background-size: 20px 15px;
+					background-size: 20px 15px;
+
+				}
+
+				&::after {
+					@include centerer(false, true);
+					content: '';
+					box-sizing: content-box;
+					width: 100%;
+					height: 14px;
+
+					left: 100%;
+
+					border: none;
+					font: normal 100%/normal Arial, Helvetica, sans-serif;
+					color: #eebd85;
+					-o-text-overflow: clip;
+					text-overflow: clip;
+					background: -webkit-radial-gradient(circle, #eebd85 0, #eebd85 15%, rgba(0, 0, 0, 0) 16%, rgba(0,0,0,0) 100%);
+					background: -moz-radial-gradient(circle, #eebd85 0, #eebd85 15%, rgba(0, 0, 0, 0) 16%, rgba(0,0,0,0) 100%);
+					background: radial-gradient(circle, #eebd85 0, #eebd85 15%, rgba(0, 0, 0, 0) 16%, rgba(0,0,0,0) 100%);
+					-webkit-background-origin: padding-box;
+					background-origin: padding-box;
+					-webkit-background-clip: border-box;
+					background-clip: border-box;
+					-webkit-background-size: 20px 15px;
+					background-size: 20px 15px;
+
+				}
+
+			}
+		}
+		.login-social-buttons {
+
+		}
+		.button-container {
+			margin-bottom: 0;
+		}
+
+	}
+
+}

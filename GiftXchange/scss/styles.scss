@@ -1,25 +1,23 @@
-/*
-    color palette: http://www.colourlovers.com/palette/2586345/Santas_Tea_Party
-*/
-$color-pa: #eebd85; //238,189,133
-$color-spiraling: #d09462; //208,148,98
-$color-carmel: #896857; //137,104,87
-$color-fruitbasket: #624549; //98,69,73
-$color-rudolphsnose: #c74e45; //199,78,69
+@import url('https://fonts.googleapis.com/css?family=Lobster|PT+Sans');
 
-//bootstrap overrides
-
-$theme-colors: (
-    "primary": $color-pa,
-    "secondary": $color-spiraling,
-    "success": $color-carmel,
-    "danger": $color-rudolphsnose,
-    "warning": $color-pa,
-    "info": $color-spiraling    
-);
-
-$body-bg: #C74E45;
-$body-color: #eebd85;
+// Presets & Variables
+@import 'presets/variables';
+@import 'presets/mixins';
 
 @import "node_modules/bootstrap/scss/bootstrap";
 
+// Additional Presets & Variables
+@import 'presets/grid-settings';
+@import 'presets/helper-classes';
+// Layout
+@import 'layout/header';
+@import 'layout/content';
+@import 'layout/footer';
+// Components
+@import 'components/general';
+@import 'components/typography';
+@import 'components/branding';
+@import 'components/nav-primary';
+@import 'components/nav-secondary';
+@import 'components/iebar';
+// Vendor
