@@ -16,5 +16,7 @@ namespace GiftXchange.Data
     {
     }
 
+    public DbSet<Group> Groups { get; set; }
+
   }
 }

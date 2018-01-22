@@ -11,9 +11,10 @@ using System;
 namespace GiftXchange.Migrations
 {
     [DbContext(typeof(GXContext))]
-    partial class GXContextModelSnapshot : ModelSnapshot
+    [Migration("20180122180657_Groups_Create")]
+    partial class Groups_Create
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
