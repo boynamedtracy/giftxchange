@@ -13,12 +13,16 @@ import { TwitterLoginResponseComponent } from './twitter-login-response/twitter-
 import { TwitterAuthComponent } from './twitter-auth/twitter-auth.component';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 import { AuthGuard } from './_guards/auth.guard';
+import { GroupEditComponent } from './groups/group-edit.component';
+import { GroupDetailsComponent } from './groups/group-details.component';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'register', component: RegisterComponent },
   { path: 'gauth', component: GoogleSigninComponent },
+  { path: 'groups/edit/:id', component: GroupEditComponent, canActivate: [AuthGuard] },
+  { path: 'group/:id', component: GroupDetailsComponent, canActivate: [AuthGuard] },
   { path: 'confirm-email', component: ConfirmEmailComponent },
   { path: 'privacy', component: PrivacyComponent },
   { path: 'facebook-login', component: FacebookLoginResponseComponent },

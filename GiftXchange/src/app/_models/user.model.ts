@@ -6,6 +6,8 @@ export class User {
   lastName: string;
   gender: string;
   facebookid: string;
+  twitterId: string;
+  googleId: string;
   photoUrl: string;
   token: string;
 }

@@ -20,6 +20,7 @@ using System.Text;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using GiftXchange.Services;
+using GiftXchange.Data.Managers;
 
 namespace GiftXchange
 {
@@ -43,6 +44,8 @@ namespace GiftXchange
       services.AddDbContext<GXContext>(options =>
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
           sqlOptions => sqlOptions.MigrationsAssembly("GiftXchange")));
+
+      services.AddTransient<IGroupManager, GroupManager>();
 
       services.AddSingleton<IJwtFactory, JwtFactory>();
 

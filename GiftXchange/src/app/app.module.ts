@@ -27,6 +27,9 @@ import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.com
 import { HeaderComponent } from './_shared/header/header.component';
 import { FooterComponent } from './_shared/footer.component';
 import { FooterRevealButtonComponent } from './_shared/footer-reveal-button.component';
+import { GroupsService } from './_services/groups.service';
+import { GroupEditComponent } from './groups/group-edit.component';
+import { GroupDetailsComponent } from './groups/group-details.component';
 
 
 @NgModule({
@@ -46,7 +49,9 @@ import { FooterRevealButtonComponent } from './_shared/footer-reveal-button.comp
     TermsOfServiceComponent,
     HeaderComponent,
     FooterRevealButtonComponent,
-    FooterComponent
+    FooterComponent,
+    GroupEditComponent,
+    GroupDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -59,6 +64,7 @@ import { FooterRevealButtonComponent } from './_shared/footer-reveal-button.comp
     AlertService,
     AuthGuard,
     AuthenticationService,
+    GroupsService,
     UserService
   ],
   bootstrap: [AppComponent]

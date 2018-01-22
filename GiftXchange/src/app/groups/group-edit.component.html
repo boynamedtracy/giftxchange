@@ -1,0 +1,24 @@
+<form name="form" (ngSubmit)="f.form.valid && saveGroup()" #f="ngForm" novalidate>
+  <input type="hidden" name="id" id="id" [ngModel]="group.id" #id="ngModel" />
+  <div class="form-group">
+    <label>Created on</label>
+    <span class="form-text">{{group.dateCreated}}</span>
+  </div>
+  <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !name.valid }">
+    <label>Name</label>
+    <input type="text" name="name" id="name" class="form-control" [(ngModel)]="group.name" #name="ngModel" required />
+    <div *ngIf="f.submitted && !name.valid" class="help-block">Name is required</div>
+  </div>
+  <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !slug.valid }">
+    <label>Slug</label>
+    <input type="text" name="slug" id="slug" class="form-control" [(ngModel)]="group.slug" #slug="ngModel" required />
+    <div *ngIf="f.submitted && !slug.valid" class="help-block">Slug is required</div>
+  </div>
+  <div class="form-group">
+    <label>Description</label>
+    <textarea id="description" name="description" [(ngModel)]="group.description" #description="ngModel" class="form-control"></textarea>
+  </div>
+  <div class="form-group">
+    <button type="submit" [disabled]="loading" class="btn btn-primary">Save Group</button>
+  </div>
+</form>

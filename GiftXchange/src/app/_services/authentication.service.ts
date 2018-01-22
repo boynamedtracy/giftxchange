@@ -50,6 +50,7 @@ export class AuthenticationService extends BaseService {
         if (user && user.token) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('auth_token', user.token.auth_token);
           this.loggedIn = true;
           this._authSource.next(user);
           return true;
@@ -68,7 +69,9 @@ export class AuthenticationService extends BaseService {
         let user = response.json();
         if (user && user.token) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
+          console.log(JSON.parse(user.token));
           localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('auth_token', JSON.parse(user.token).auth_token);
           this.loggedIn = true;
           this._authSource.next(user);
           return true;
@@ -90,6 +93,7 @@ export class AuthenticationService extends BaseService {
         if (user && user.token) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('auth_token', user.token.auth_token);
           this.loggedIn = true;
           this._authSource.next(user);
           return true;
@@ -142,6 +146,7 @@ export class AuthenticationService extends BaseService {
         if (user && user.token) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('auth_token', user.token.auth_token);
           this.loggedIn = true;
           this._authSource.next(user);
           return true;
@@ -153,6 +158,7 @@ export class AuthenticationService extends BaseService {
   logout() {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('auth_token');
     this.loggedIn = false;
     this._authSource.next(null);
   }
