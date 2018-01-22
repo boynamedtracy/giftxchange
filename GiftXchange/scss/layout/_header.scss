@@ -1,13 +1,55 @@
-#header {
-	position: relative;
-	padding: 10px;
-	z-index: 100;
-	.register-box {
-		.register-text {
-			font-family: 'PT Sans';
-			margin-right: 20px;	
-			font-size: 1.05rem;	
-		}
-	}
 
+#profileHeader {
+  position: relative;
+  z-index: 1000;
+  background: $color-carmel;
+  padding: 10px;
+  box-shadow: 0 0 5px theme-color-level(carmel, 5);
+
+  .user-nav {
+    margin: 0;
+
+    .profile-pic {
+      height: 32px;
+      width: 32px;
+    }
+
+    .dropdown-menu {
+      //padding: 0;
+      &:before {
+        position: absolute;
+        display: inline-block;
+        content: '';
+        border: 7px solid transparent;
+        border-bottom-color: $color-pa;
+        top: -14px;
+        right: 10px;
+        left: auto;
+      }
+
+      .dropdown-divider {
+        //margin: 0;
+      }
+
+      .dropdown-item {
+        a {
+          display: block;
+          color: $color-fruitbasket;
+
+          &:hover {
+            color: $color-pa;
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+
+  .register-box {
+    .register-text {
+      font-family: 'PT Sans';
+      margin-right: 20px;
+      font-size: 1.05rem;
+    }
+  }
 }

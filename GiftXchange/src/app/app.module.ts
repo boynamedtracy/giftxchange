@@ -24,6 +24,7 @@ import { FacebookLoginResponseComponent } from './facebook-login-response/facebo
 import { TwitterLoginResponseComponent } from './twitter-login-response/twitter-login-response.component';
 import { TwitterAuthComponent } from './twitter-auth/twitter-auth.component';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
+import { HeaderComponent } from './_shared/header/header.component';
 import { FooterComponent } from './_shared/footer.component';
 import { FooterRevealButtonComponent } from './_shared/footer-reveal-button.component';
 
@@ -43,6 +44,7 @@ import { FooterRevealButtonComponent } from './_shared/footer-reveal-button.comp
     TwitterLoginResponseComponent,
     TwitterAuthComponent,
     TermsOfServiceComponent,
+    HeaderComponent,
     FooterRevealButtonComponent,
     FooterComponent
   ],
