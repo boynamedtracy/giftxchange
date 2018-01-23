@@ -13,5 +13,11 @@ namespace GiftXchange.Helpers
       Active = 1,
       Suspended = 2
     }
+    public enum GroupInviteStatus
+    {
+      Pending = 0,
+      Accepted = 1,
+      Declined = 2
+    }
   }
 }
