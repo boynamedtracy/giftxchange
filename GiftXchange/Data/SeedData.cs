@@ -35,9 +35,16 @@ namespace GiftXchange.Data
         context.NotificationTypes.Add(new Models.NotificationType() { name = "Exchange_Deleted" });
         context.NotificationTypes.Add(new Models.NotificationType() { name = "Exchange_Updated" });
         context.NotificationTypes.Add(new Models.NotificationType() { name = "Exchange_Generated" });
-
-
-
+      }
+      if (context.Users.Any())
+      {
+        foreach (var u in context.Users)
+        {
+          if (!context.Lists.Any(x => x.owner == u))
+          {
+            context.Lists.Add(new Models.List() { name = "My Wish List", owner = u, priority = -1, slug = "my-wish-list" });
+          }
+        }
       }
     }
   }

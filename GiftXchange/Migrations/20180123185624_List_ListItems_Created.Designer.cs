@@ -11,9 +11,10 @@ using System;
 namespace GiftXchange.Migrations
 {
     [DbContext(typeof(GXContext))]
-    partial class GXContextModelSnapshot : ModelSnapshot
+    [Migration("20180123185624_List_ListItems_Created")]
+    partial class List_ListItems_Created
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
