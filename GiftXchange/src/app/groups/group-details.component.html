@@ -1,1 +1,20 @@
-group details for <span *ngIf="group != null">{{group.name}}</span><span *ngIf="group == null">not found</span>
+<gx-header></gx-header>
+
+<div id="mainPage">
+
+  <div class="page-container">
+    <p><a [routerLink]="['/home']"><i class="fa fa-home"></i> Home</a></p>
+    <h2>{{group.name}}</h2>
+    <div *ngIf="group.description">
+      {{group.description}}
+    </div>
+
+  </div>
+
+
+  <footer-reveal-button></footer-reveal-button>
+
+  <div class="body-bg"></div>
+</div>
+
+<gx-footer></gx-footer>
