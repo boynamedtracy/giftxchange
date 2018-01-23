@@ -133,6 +133,9 @@ namespace GiftXchange.Migrations
 
                     b.Property<DateTime>("dateUpdated");
 
+                    b.Property<string>("description")
+                        .HasMaxLength(500);
+
                     b.Property<string>("guid")
                         .IsRequired();
 

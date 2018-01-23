@@ -24,7 +24,24 @@
           <a [routerLink]="['/groups/edit/-1']">Add a new group</a>
         </div>
         <div class="col col-md-4">
-          <h3>Lists go here</h3>
+          <h3>My Lists</h3>
+          <div class="">
+            <div class="card" *ngFor="let list of lists">
+              <div class="card-body">
+                <h5 class="card-title">{{list.name}}</h5>
+                <div class="card-context">
+                  <ul *ngIf="list.items && list.items.length > 0">
+                    <li *ngFor="let item of list.items">
+                      {{item.name}}
+                    </li>
+                  </ul>
+                  <a class="card-link" routerLink="/lists/add-item/{{list.id}}">Add an item</a>
+                </div>
+                <a class="card-link" routerLink="/lists/list/{{list.id}}">Go to List</a>
+              </div>
+            </div>
+          </div>
+          <a [routerLink]="['/lists/edit/-1']">Add a new list</a>
         </div>
       </div>
     </div>

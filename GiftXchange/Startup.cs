@@ -21,6 +21,7 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using GiftXchange.Services;
 using GiftXchange.Data.Managers;
+using Newtonsoft.Json;
 
 namespace GiftXchange
 {
@@ -173,11 +174,11 @@ namespace GiftXchange
                     });
         });
 
-      app.UseAuthentication();      
+      app.UseAuthentication();
       app.UseDefaultFiles();
       app.UseStaticFiles();
       app.UseMvc();
-      
+
     }
   }
 }

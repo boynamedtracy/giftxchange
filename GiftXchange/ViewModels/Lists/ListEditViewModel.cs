@@ -1,0 +1,29 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace GiftXchange.ViewModels.Lists
+{
+  public class ListEditViewModel
+  {
+    public int id { get; set; }
+    [Required]
+    public string guid { get; set; } = Guid.NewGuid().ToString();
+    [Required]
+    [MaxLength(128)]
+    public string name { get; set; }
+    [Required]
+    [MaxLength(128)]
+    public string slug { get; set; }
+    [Required]
+    public DateTime dateCreated { get; set; } = DateTime.Now;
+    [Required]
+    public DateTime dateUpdated { get; set; } = DateTime.Now;
+    [Required]
+    public int priority { get; set; } = 0;
+    [MaxLength(500)]
+    public string description { get; set; }
+  }
+}

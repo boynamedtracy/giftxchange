@@ -12,11 +12,14 @@
     <None Remove="src\app\app.config.ts" />
     <None Remove="src\app\groups\group-details.component.ts" />
     <None Remove="src\app\groups\group-edit.component.ts" />
+    <None Remove="src\app\lists\list.routing.ts" />
     <None Remove="src\app\_directives\alert.component.ts" />
     <None Remove="src\app\_directives\index.ts" />
     <None Remove="src\app\_guards\auth.guard.ts" />
     <None Remove="src\app\_models\group.model.ts" />
     <None Remove="src\app\_models\groupEdit.viewmodel.ts" />
+    <None Remove="src\app\_models\list-item.model.ts" />
+    <None Remove="src\app\_models\list.model.ts" />
     <None Remove="src\app\_models\login.viewmodel.ts" />
     <None Remove="src\app\_models\register.viewmodel.ts" />
     <None Remove="src\app\_models\user.model.ts" />
@@ -25,6 +28,7 @@
     <None Remove="src\app\_services\base.service.ts" />
     <None Remove="src\app\_services\groups.service.ts" />
     <None Remove="src\app\_services\index.ts" />
+    <None Remove="src\app\_services\lists.service.ts" />
     <None Remove="src\app\_services\user.service.ts" />
   </ItemGroup>
 
@@ -53,12 +57,15 @@
     <TypeScriptCompile Include="src\app\_guards\auth.guard.ts" />
     <TypeScriptCompile Include="src\app\_models\group.model.ts" />
     <TypeScriptCompile Include="src\app\_models\groupEdit.viewmodel.ts" />
+    <TypeScriptCompile Include="src\app\_models\list-item.model.ts" />
+    <TypeScriptCompile Include="src\app\_models\list.model.ts" />
     <TypeScriptCompile Include="src\app\_models\login.viewmodel.ts" />
     <TypeScriptCompile Include="src\app\_models\register.viewmodel.ts" />
     <TypeScriptCompile Include="src\app\_models\user.model.ts" />
     <TypeScriptCompile Include="src\app\_services\alert.service.ts" />
     <TypeScriptCompile Include="src\app\_services\authentication.service.ts" />
     <TypeScriptCompile Include="src\app\_services\base.service.ts" />
+    <TypeScriptCompile Include="src\app\_services\lists.service.ts" />
     <TypeScriptCompile Include="src\app\_services\groups.service.ts" />
     <TypeScriptCompile Include="src\app\_services\index.ts" />
     <TypeScriptCompile Include="src\app\_services\user.service.ts" />

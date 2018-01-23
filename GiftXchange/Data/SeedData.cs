@@ -35,6 +35,7 @@ namespace GiftXchange.Data
         context.NotificationTypes.Add(new Models.NotificationType() { name = "Exchange_Deleted" });
         context.NotificationTypes.Add(new Models.NotificationType() { name = "Exchange_Updated" });
         context.NotificationTypes.Add(new Models.NotificationType() { name = "Exchange_Generated" });
+        context.SaveChanges();
       }
       if (context.Users.Any())
       {
@@ -45,6 +46,7 @@ namespace GiftXchange.Data
             context.Lists.Add(new Models.List() { name = "My Wish List", owner = u, priority = -1, slug = "my-wish-list" });
           }
         }
+        context.SaveChanges();
       }
     }
   }

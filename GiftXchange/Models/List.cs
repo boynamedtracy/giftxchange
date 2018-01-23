@@ -25,5 +25,10 @@ namespace GiftXchange.Models
     public DateTime dateUpdated { get; set; } = DateTime.Now;
     [Required]
     public int priority { get; set; } = 0;
+    [MaxLength(500)]
+    public string description { get; set; }
+
+    public ICollection<ListItem> items { get; set; }
+
   }
 }

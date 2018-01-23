@@ -30,6 +30,11 @@ import { FooterRevealButtonComponent } from './_shared/footer-reveal-button.comp
 import { GroupsService } from './_services/groups.service';
 import { GroupEditComponent } from './groups/group-edit.component';
 import { GroupDetailsComponent } from './groups/group-details.component';
+import { ListsService } from './_services/lists.service';
+import { AddItemComponent } from './lists/add-item/add-item.component';
+import { EditListComponent } from './lists/edit-list/edit-list.component';
+import { ListsComponent } from './lists/lists/lists.component';
+import { ListComponent } from './lists/list/list.component';
 
 
 @NgModule({
@@ -51,7 +56,11 @@ import { GroupDetailsComponent } from './groups/group-details.component';
     FooterRevealButtonComponent,
     FooterComponent,
     GroupEditComponent,
-    GroupDetailsComponent
+    GroupDetailsComponent,
+    AddItemComponent,
+    EditListComponent,
+    ListsComponent,
+    ListComponent
   ],
   imports: [
     BrowserModule,
@@ -65,6 +74,7 @@ import { GroupDetailsComponent } from './groups/group-details.component';
     AuthGuard,
     AuthenticationService,
     GroupsService,
+    ListsService,
     UserService
   ],
   bootstrap: [AppComponent]

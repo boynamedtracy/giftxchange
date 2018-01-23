@@ -6,6 +6,8 @@ import { AuthenticationService } from '../_services/index';
 import { GroupsService } from '../_services/groups.service';
 import { Group } from '../_models/group.model';
 import { AlertService } from '../_services/alert.service';
+import { ListsService } from '../_services/lists.service';
+import { List } from '../_models/list.model';
 
 
 @Component({
@@ -19,12 +21,15 @@ export class HomeComponent implements OnInit {
   users: User[] = [];
 
   groups: Group[] = [];
+  lists: List[] = [];
 
   constructor(private route: ActivatedRoute,
     private router: Router,
     private alertService: AlertService,
     private authService: AuthenticationService,
-    private groupsService: GroupsService) {
+    private groupsService: GroupsService,
+    private listsService: ListsService
+  ) {
     //this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
     //authGuard.canActivate(this.route.snapshot, this.state.snapshot)
@@ -43,8 +48,17 @@ export class HomeComponent implements OnInit {
             this.groups = data;
           },
           error => {
-            this.alertService.error('Error: ' + error, false);
+            this.alertService.error('Error loading groups: ' + error, false);
           }
+        );
+      this.listsService.getLists()
+        .subscribe(
+        data => {
+          this.lists = data;
+        },
+        error => {
+          this.alertService.error('Error loading lists: ' + error, false);
+        }
         );
     }
 

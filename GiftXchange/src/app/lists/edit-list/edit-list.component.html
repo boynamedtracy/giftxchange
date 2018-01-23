@@ -1,0 +1,38 @@
+<div *ngIf="list">
+  <h2>{{title}}</h2>
+  <form name="form" (ngSubmit)="f.form.valid && savelist()" #f="ngForm" novalidate>
+    <input type="hidden" name="id" id="id" [ngModel]="list.id" #id="ngModel" />
+    <input type="hidden" name="guid" id="guid" [ngModel]="list.guid" #guid="ngModel" />    
+
+    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !name.valid }">
+      <label>Name</label>
+      <input type="text" name="name" id="name" class="form-control" [(ngModel)]="list.name" #name="ngModel" required />
+      <div *ngIf="f.submitted && !name.valid" class="help-block">Name is required</div>
+    </div>
+    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !slug.valid }">
+      <label>Slug</label>
+      <input type="text" name="slug" id="slug" class="form-control" [(ngModel)]="list.slug" #slug="ngModel" required />
+      <div *ngIf="f.submitted && !slug.valid" class="help-block">Slug is required</div>
+    </div>
+    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !priority.valid }">
+      <label>Priority</label>
+      <input type="tel" name="priority" id="priority" class="form-control" [(ngModel)]="list.priority" #priority="ngModel" required />
+      <div *ngIf="f.submitted && !priority.valid" class="help-block">Priority is required</div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="description" name="description" [(ngModel)]="list.description" #description="ngModel" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+      <button type="submit" [disabled]="loading" class="btn btn-primary">Add item</button>
+    </div>
+    <div class="form-group">
+      <label>Created on</label>
+      <span class="form-text">{{list.dateCreated}}</span>
+    </div>
+    <div class="form-group">
+      <label>Last updated on</label>
+      <span class="form-text">{{list.dateModified}}</span>
+    </div>
+  </form>
+</div>
