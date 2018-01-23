@@ -177,6 +177,7 @@ namespace GiftXchange
       app.UseDefaultFiles();
       app.UseStaticFiles();
       app.UseMvc();
+      
     }
   }
 }
