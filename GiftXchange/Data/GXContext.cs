@@ -18,6 +18,7 @@ namespace GiftXchange.Data
 
     public DbSet<Group> Groups { get; set; }
     public DbSet<NotificationType> NotificationTypes { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
   }
 }
