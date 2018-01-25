@@ -38,6 +38,8 @@ import { ListComponent } from './lists/list/list.component';
 import { SendInviteComponent } from './groups/send-invite/send-invite.component';
 import { AcceptInviteComponent } from './groups/accept-invite/accept-invite.component';
 import { GroupsComponent } from './groups/groups.component';
+import { AccountComponent } from './account/account.component';
+import { MyProfileComponent } from './account/my-profile/my-profile.component';
 
 
 @NgModule({
@@ -66,7 +68,9 @@ import { GroupsComponent } from './groups/groups.component';
     ListComponent,
     SendInviteComponent,
     AcceptInviteComponent,
-    GroupsComponent
+    GroupsComponent,
+    AccountComponent,
+    MyProfileComponent
   ],
   imports: [
     BrowserModule,

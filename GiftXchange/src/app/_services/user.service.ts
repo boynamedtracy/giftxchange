@@ -11,6 +11,15 @@ import { User } from '../_models/user.model';
 @Injectable()
 export class UserService extends BaseService {
 
+  getAuthHeaders(): RequestOptions {
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    let authToken = localStorage.getItem('auth_token');
+    headers.append('Authorization', `Bearer ${authToken}`);
+    let options = new RequestOptions({ headers: headers, withCredentials: true });
+    return options;
+  }
+
   constructor(private http: Http, private config: AppConfig) {
     super();
   }
@@ -35,6 +44,31 @@ export class UserService extends BaseService {
     return this.http.post(this.config.apiUrl + '/account/confirmemail', body, options)
       .map(res => res)
       .catch(this.handleError);
+
+  }
+
+  updateProfile(user: any) {
+    let options = this.getAuthHeaders();
+
+    return this.http.post(this.config.apiUrl + '/account/updateprofile', user, options)
+      .map((response: Response) => {
+        let vm = response.json();
+
+        console.log('vm: ' + vm);
+        console.log('vm.user: ' + JSON.stringify(vm.user));
+        console.log('vm.emailChanged: ' + vm.emailChanged);
+
+        localStorage.setItem('currentUser', JSON.stringify(vm.user));
+
+        if (vm.emailChanged == false) {
+          
+        } else {
+          
+        }
+        
+        
+        return vm;
+      });
 
   }
 

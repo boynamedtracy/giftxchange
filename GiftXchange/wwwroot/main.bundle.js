@@ -219,6 +219,8 @@ var AuthenticationService = (function (_super) {
         _this.twitterRequestToken = "";
         _this.twitterTokenSecret = "";
         if (localStorage.getItem('currentUser') != null) {
+            //localStorage.removeItem('currentUser')
+            //console.log(localStorage.removeItem('currentUser'));
             var u = JSON.parse(localStorage.getItem('currentUser'));
             _this.loggedIn = !!u;
             _this._authSource.next(u);
@@ -353,6 +355,7 @@ var AuthenticationService = (function (_super) {
     AuthenticationService.prototype.getUser = function () {
         if (!this.loggedIn)
             return null;
+        //console.log(localStorage.getItem('currentUser'));
         var u = JSON.parse(localStorage.getItem('currentUser'));
         return u;
     };
@@ -740,6 +743,14 @@ var UserService = (function (_super) {
         _this.config = config;
         return _this;
     }
+    UserService.prototype.getAuthHeaders = function () {
+        var headers = new http_1.Headers();
+        headers.append('Content-Type', 'application/json');
+        var authToken = localStorage.getItem('auth_token');
+        headers.append('Authorization', "Bearer " + authToken);
+        var options = new http_1.RequestOptions({ headers: headers, withCredentials: true });
+        return options;
+    };
     UserService.prototype.register = function (email, password, confirmPassword, firstName, lastName, gender) {
         var body = JSON.stringify({ email: email, password: password, confirmPassword: confirmPassword, firstName: firstName, lastName: lastName, gender: gender });
         var headers = new http_1.Headers({ 'Content-Type': 'application/json' });
@@ -755,6 +766,22 @@ var UserService = (function (_super) {
         return this.http.post(this.config.apiUrl + '/account/confirmemail', body, options)
             .map(function (res) { return res; })
             .catch(this.handleError);
+    };
+    UserService.prototype.updateProfile = function (user) {
+        var options = this.getAuthHeaders();
+        return this.http.post(this.config.apiUrl + '/account/updateprofile', user, options)
+            .map(function (response) {
+            var vm = response.json();
+            console.log('vm: ' + vm);
+            console.log('vm.user: ' + JSON.stringify(vm.user));
+            console.log('vm.emailChanged: ' + vm.emailChanged);
+            localStorage.setItem('currentUser', JSON.stringify(vm.user));
+            if (vm.emailChanged == false) {
+            }
+            else {
+            }
+            return vm;
+        });
     };
     // private helper methods
     UserService.prototype.jwt = function () {
@@ -861,7 +888,7 @@ exports.FooterComponent = FooterComponent;
 /***/ "../../../../../src/app/_shared/header/header.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<header id=\"profileHeader\">\r\n  <div class=\"row align-items-center justify-content-end\">\r\n    <div class=\"col col-md-3 text-right\">\r\n      <ul class=\"user-nav list-unstyled\" *ngIf=\"isLoggedIn == true && user != null\">\r\n        <li class=\"dropdown\">\r\n          <a href=\"javascript:;\" data-offset=\"0, 17px\" class=\"dropdown-toggle\" role=\"button\" id=\"userMenuLink\"\r\n             data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\"><img *ngIf=\"user.photoUrl\" [src]=\"user.photoUrl\" alt=\"My profile pic\" class=\"profile-pic\" /></a>\r\n          <ul class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"userMenuLink\">\r\n            <li class=\"dropdown-header\">Signed in as {{user.firstName}} {{user.lastName}}</li>\r\n            <li class=\"dropdown-divider\"></li>\r\n            <li class=\"dropdown-item\"><a href=\"javascript:;\">My groups</a></li>\r\n            <li class=\"dropdown-item\"><a href=\"javascript:;\">My lists</a></li>\r\n            <li class=\"dropdown-divider\"></li>\r\n            <li class=\"dropdown-item\"><a href=\"javascript:;\" (click)=\"logout()\" class=\"logout-button\">Logout</a></li>\r\n          </ul>\r\n        </li>\r\n      </ul>\r\n      <div *ngIf=\"isLoggedIn == false || user === null\">\r\n        <div class=\"register-box\">\r\n          <span class=\"register-text align-middle\">Not a member?</span><a [routerLink]=\"['/register']\" class=\"btn btn-primary btn-register\">Register</a>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</header>\r\n"
+module.exports = "<header id=\"profileHeader\">\r\n  <div class=\"row align-items-center justify-content-end\">\r\n    <div class=\"col col-md-3 text-right\">\r\n      <ul class=\"user-nav list-unstyled\" *ngIf=\"isLoggedIn == true && user != null\">\r\n        <li class=\"dropdown\">\r\n          <a href=\"javascript:;\" data-offset=\"0, 17px\" class=\"dropdown-toggle\" role=\"button\" id=\"userMenuLink\"\r\n             data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\"><img *ngIf=\"user.photoUrl\" [src]=\"user.photoUrl\" alt=\"My profile pic\" class=\"profile-pic\" /></a>\r\n          <ul class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"userMenuLink\">\r\n            <li class=\"dropdown-header\">Signed in as {{user.firstName}} {{user.lastName}}</li>\r\n            <li class=\"dropdown-divider\"></li>\r\n            <li class=\"dropdown-item\"><a [routerLink]=\"['/account/my-profile']\" [queryParams]=\"{ returnUrl : thisUrl }\">My Profile</a></li>\r\n            <li class=\"dropdown-item\"><a href=\"javascript:;\">My groups</a></li>\r\n            <li class=\"dropdown-item\"><a href=\"javascript:;\">My lists</a></li>\r\n            <li class=\"dropdown-divider\"></li>\r\n            <li class=\"dropdown-item\"><a href=\"javascript:;\" (click)=\"logout()\" class=\"logout-button\">Logout</a></li>\r\n          </ul>\r\n        </li>\r\n      </ul>\r\n      <div *ngIf=\"isLoggedIn == false || user === null\">\r\n        <div class=\"register-box\">\r\n          <span class=\"register-text align-middle\">Not a member?</span><a [routerLink]=\"['/register']\" class=\"btn btn-primary btn-register\">Register</a>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</header>\r\n"
 
 /***/ }),
 
@@ -889,12 +916,15 @@ var HeaderComponent = (function () {
         this.router = router;
         this.authService = authService;
         this.isLoggedIn = false;
+        this.thisUrl = '';
         this.isLoggedIn = authService.isLoggedIn();
+        this.thisUrl = this.router.url;
         if (this.isLoggedIn) {
             this.user = authService.getUser();
         }
     }
     HeaderComponent.prototype.ngOnInit = function () {
+        console.log('thisurl: ' + this.thisUrl);
     };
     HeaderComponent.prototype.logout = function () {
         this.authService.logout();
@@ -913,6 +943,174 @@ var HeaderComponent = (function () {
     return HeaderComponent;
 }());
 exports.HeaderComponent = HeaderComponent;
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/account/account.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<p>\n  account works!\n</p>\n\n<router-outlet></router-outlet>\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/account/account.component.scss":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/account/account.component.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("../../../core/esm5/core.js");
+var AccountComponent = (function () {
+    function AccountComponent() {
+    }
+    AccountComponent.prototype.ngOnInit = function () {
+    };
+    AccountComponent = __decorate([
+        core_1.Component({
+            selector: 'app-account',
+            template: __webpack_require__("../../../../../src/app/account/account.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/account/account.component.scss")]
+        }),
+        __metadata("design:paramtypes", [])
+    ], AccountComponent);
+    return AccountComponent;
+}());
+exports.AccountComponent = AccountComponent;
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/account/my-profile/my-profile.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<alert></alert>\r\n\r\n<form name=\"form\" id=\"form\" method=\"post\" (ngSubmit)=\"f.form.valid && updateProfile()\" #f=\"ngForm\" novalidate>\r\n  <input type=\"hidden\" name=\"id\" id=\"id\" [ngModel]=\"user.id\" #id=\"ngModel\" />\r\n  <div class=\"container\">\r\n    <h2>My Profile</h2>\r\n    <div class=\"row\">\r\n      <div class=\"col-xs-12 col-sm-2\">\r\n        <img *ngIf=\"user.photoUrl\" [src]=\"user.photoUrl\" alt=\"My profile pic\" class=\"img-fluid img-thumbnail\" style=\"width: 100%; height: auto;\" />\r\n      </div>\r\n      <div class=\"col-xs-12 col-sm-7\">\r\n        <h5>About me</h5>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !email.valid && !enableEmailUpdate }\">\r\n          <label for=\"email\">Your email address</label>\r\n          <input type=\"email\" class=\"form-control\" name=\"email\" [(ngModel)]=\"user.email\" #email=\"ngModel\" [readonly]=\"!isSocialUser && !enableEmailUpdate\" />\r\n          <a href=\"javascript:;\" (click)=\"enableEmailUpdate = true\" [hidden]=\"enableEmailUpdate\" class=\"form-text text-muted\">update my email</a>\r\n          <a href=\"javascript:;\" (click)=\"enableEmailUpdate = false\" [hidden]=\"!enableEmailUpdate\" class=\"form-text text-muted\">cancel</a>\r\n          <div *ngIf=\"f.submitted && !email.valid && !enableEmailUpdate\" class=\"text-danger\">Email is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !firstName.valid }\">\r\n          <label for=\"firstName\">Youe first name</label>\r\n          <input type=\"text\" class=\"form-control\" name=\"firstName\" [(ngModel)]=\"user.firstName\" #firstName=\"ngModel\" required />\r\n          <div *ngIf=\"f.submitted && !firstName.valid\" class=\"text-danger\">First name is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !lastName.valid }\">\r\n          <label for=\"lastName\">Youe last name</label>\r\n          <input type=\"text\" class=\"form-control\" name=\"lastName\" [(ngModel)]=\"user.lastName\" #lastName=\"ngModel\" required />\r\n          <div *ngIf=\"f.submitted && !lastName.valid\" class=\"text-danger\">Last name is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !birthDate.valid }\">\r\n          <label for=\"birthDate\">Your birth date</label>\r\n          <input type=\"date\" class=\"form-control\" name=\"birthDate\" [ngModel]=\"user.birthDate | date: 'yyyy-MM-dd'\" (ngModelChange)=\"dateChanged($event)\" #birthDate=\"ngModel\"  />\r\n          <div *ngIf=\"f.submitted && !birthDate.valid\" class=\"text-danger\">Birthdate is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !male.valid && !female.valid }\">\r\n          <label for=\"gender\">Your gender ... <small>(as stated on your birth certificate)</small></label><br />\r\n          <div class=\"btn-group btn-group-toggle\" data-toggle=\"buttons\">\r\n            <label class=\"btn btn-secondary\" [ngClass]=\"{ 'active' : gender == 'm' }\" (click)=\"gender = 'm'\">\r\n              <input type=\"radio\" name=\"gender\" [value]=\"m\" [(ngModel)]=\"gender\" #male=\"ngModel\" /> Male\r\n            </label>\r\n            <label class=\"btn btn-secondary\" [ngClass]=\"{ 'active' : gender == 'f' }\" (click)=\"gender = 'f'\">\r\n              <input type=\"radio\" name=\"gender\" [value]=\"f\" [(ngModel)]=\"gender\" #female=\"ngModel\" /> Female\r\n            </label>\r\n          </div>\r\n          <div *ngIf=\"f.submitted && !male.valid && !female.valid\" class=\"text-danger\">Gender is required</div>\r\n        </div>\r\n        <div class=\"form-group\">\r\n          <button type=\"submit\" class=\"btn btn-primary\" [disabled]=\"loading\">Update my profile</button>\r\n        </div>\r\n      </div>\r\n      <div class=\"col-xs-12 col-sm-3\" *ngIf=\"isSocialUSer\">\r\n        <h5>Change my password</h5>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !password.valid }\">\r\n          <label for=\"password\">Password</label>\r\n          <input type=\"password\" class=\"form-control\" name=\"password\" [(ngModel)]=\"user.password\" #password=\"ngModel\" />\r\n          <div *ngIf=\"f.submitted && !password.valid\" class=\"help-block\">Password is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !confirmPassword.valid && confirmPassword == password }\">\r\n          <label for=\"confirmPassword\">Re-type Password</label>\r\n          <input type=\"password\" class=\"form-control\" name=\"confirmPassword\" [(ngModel)]=\"user.confirmPassword\" #confirmPassword=\"ngModel\" />\r\n          <div *ngIf=\"f.submitted && !password.valid\" class=\"help-block\">Password is required</div>\r\n          <div *ngIf=\"f.submitted && confirmPassword != password\">Password does not match</div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</form>\r\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/account/my-profile/my-profile.component.scss":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/account/my-profile/my-profile.component.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("../../../core/esm5/core.js");
+var router_1 = __webpack_require__("../../../router/esm5/router.js");
+var alert_service_1 = __webpack_require__("../../../../../src/app/_services/alert.service.ts");
+var authentication_service_1 = __webpack_require__("../../../../../src/app/_services/authentication.service.ts");
+var user_service_1 = __webpack_require__("../../../../../src/app/_services/user.service.ts");
+var MyProfileComponent = (function () {
+    function MyProfileComponent(route, router, alertService, authService, userService) {
+        this.route = route;
+        this.router = router;
+        this.alertService = alertService;
+        this.authService = authService;
+        this.userService = userService;
+        this.returnUrl = '';
+        this.user = {};
+        this.gender = '';
+        this.loading = false;
+        this.isSocialUser = false;
+        this.enableEmailUpdate = false;
+        this.user = authService.getUser();
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+    }
+    MyProfileComponent.prototype.ngOnInit = function () {
+        if (this.user != null) {
+            this.isSocialUser = (this.user.facebookid || this.user.twitterId || this.user.googleId);
+            this.gender = this.user.gender;
+        }
+    };
+    MyProfileComponent.prototype.dateChanged = function (newDate) {
+        this.user.birthDate = new Date(newDate);
+    };
+    MyProfileComponent.prototype.updateProfile = function () {
+        var _this = this;
+        this.user.gender = this.gender;
+        this.userService.updateProfile(this.user)
+            .subscribe(function (data) {
+            var s = "";
+            if (!data.emailChanged) {
+                s = "Profile Updated!";
+            }
+            else {
+                s = "Your email has been updated. Please check your inbox to confirm your new email address.";
+            }
+            _this.alertService.success(s, true);
+            _this.router.navigate([_this.returnUrl]);
+        }, function (error) {
+            _this.alertService.error('error: ' + error, false);
+        });
+    };
+    MyProfileComponent = __decorate([
+        core_1.Component({
+            selector: 'app-my-profile',
+            template: __webpack_require__("../../../../../src/app/account/my-profile/my-profile.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/account/my-profile/my-profile.component.scss")]
+        }),
+        __metadata("design:paramtypes", [router_1.ActivatedRoute,
+            router_1.Router,
+            alert_service_1.AlertService,
+            authentication_service_1.AuthenticationService,
+            user_service_1.UserService])
+    ], MyProfileComponent);
+    return MyProfileComponent;
+}());
+exports.MyProfileComponent = MyProfileComponent;
 
 
 /***/ }),
@@ -1053,6 +1251,8 @@ var list_component_1 = __webpack_require__("../../../../../src/app/lists/list/li
 var send_invite_component_1 = __webpack_require__("../../../../../src/app/groups/send-invite/send-invite.component.ts");
 var accept_invite_component_1 = __webpack_require__("../../../../../src/app/groups/accept-invite/accept-invite.component.ts");
 var groups_component_1 = __webpack_require__("../../../../../src/app/groups/groups.component.ts");
+var account_component_1 = __webpack_require__("../../../../../src/app/account/account.component.ts");
+var my_profile_component_1 = __webpack_require__("../../../../../src/app/account/my-profile/my-profile.component.ts");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -1083,7 +1283,9 @@ var AppModule = (function () {
                 list_component_1.ListComponent,
                 send_invite_component_1.SendInviteComponent,
                 accept_invite_component_1.AcceptInviteComponent,
-                groups_component_1.GroupsComponent
+                groups_component_1.GroupsComponent,
+                account_component_1.AccountComponent,
+                my_profile_component_1.MyProfileComponent
             ],
             imports: [
                 platform_browser_1.BrowserModule,
@@ -1137,18 +1339,28 @@ var add_item_component_1 = __webpack_require__("../../../../../src/app/lists/add
 var groups_component_1 = __webpack_require__("../../../../../src/app/groups/groups.component.ts");
 var send_invite_component_1 = __webpack_require__("../../../../../src/app/groups/send-invite/send-invite.component.ts");
 var accept_invite_component_1 = __webpack_require__("../../../../../src/app/groups/accept-invite/accept-invite.component.ts");
+var account_component_1 = __webpack_require__("../../../../../src/app/account/account.component.ts");
+var my_profile_component_1 = __webpack_require__("../../../../../src/app/account/my-profile/my-profile.component.ts");
 var appRoutes = [
     { path: '', component: login_component_1.LoginComponent },
+    {
+        path: 'account', component: account_component_1.AccountComponent, canActivate: [auth_guard_1.AuthGuard],
+        children: [
+            { path: 'my-profile', component: my_profile_component_1.MyProfileComponent }
+        ]
+    },
     { path: 'home', component: home_component_1.HomeComponent, canActivate: [auth_guard_1.AuthGuard] },
     { path: 'register', component: register_component_1.RegisterComponent },
     { path: 'gauth', component: google_signin_component_1.GoogleSigninComponent },
     { path: 'group/:id', component: group_details_component_1.GroupDetailsComponent, canActivate: [auth_guard_1.AuthGuard] },
-    { path: 'lists', component: lists_component_1.ListsComponent, canActivate: [auth_guard_1.AuthGuard],
+    {
+        path: 'lists', component: lists_component_1.ListsComponent, canActivate: [auth_guard_1.AuthGuard],
         children: [
             { path: 'add-item/:id', component: add_item_component_1.AddItemComponent },
             { path: 'edit/:id', component: edit_list_component_1.EditListComponent },
             { path: 'list/:id', component: list_component_1.ListComponent },
-        ] },
+        ]
+    },
     { path: 'confirm-email', component: confirm_email_component_1.ConfirmEmailComponent },
     { path: 'privacy', component: privacy_component_1.PrivacyComponent },
     { path: 'facebook-login', component: facebook_login_response_component_1.FacebookLoginResponseComponent },

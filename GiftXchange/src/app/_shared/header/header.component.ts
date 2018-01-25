@@ -13,6 +13,7 @@ export class HeaderComponent implements OnInit {
 
   isLoggedIn: boolean = false;
   user: User;
+  thisUrl: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -21,6 +22,7 @@ export class HeaderComponent implements OnInit {
   ) {
 
     this.isLoggedIn = authService.isLoggedIn();
+    this.thisUrl = this.router.url;
 
     if (this.isLoggedIn) {
       this.user = authService.getUser();
@@ -29,7 +31,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    console.log('thisurl: ' + this.thisUrl);
   }
 
   logout() {

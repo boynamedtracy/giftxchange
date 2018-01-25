@@ -1,4 +1,4 @@
-import { ModuleWithProviders }  from '@angular/core';
+import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { HomeComponent } from './home/home.component';
@@ -22,19 +22,29 @@ import { AddItemComponent } from './lists/add-item/add-item.component';
 import { GroupsComponent } from './groups/groups.component';
 import { SendInviteComponent } from './groups/send-invite/send-invite.component';
 import { AcceptInviteComponent } from './groups/accept-invite/accept-invite.component';
+import { AccountComponent } from './account/account.component';
+import { MyProfileComponent } from './account/my-profile/my-profile.component';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent },
+  {
+    path: 'account', component: AccountComponent, canActivate: [AuthGuard],
+    children: [
+      { path: 'my-profile', component: MyProfileComponent }
+    ]
+  },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'register', component: RegisterComponent },
   { path: 'gauth', component: GoogleSigninComponent },
   { path: 'group/:id', component: GroupDetailsComponent, canActivate: [AuthGuard] },
-  { path: 'lists', component: ListsComponent, canActivate: [AuthGuard],
+  {
+    path: 'lists', component: ListsComponent, canActivate: [AuthGuard],
     children: [
       { path: 'add-item/:id', component: AddItemComponent },
       { path: 'edit/:id', component: EditListComponent },
       { path: 'list/:id', component: ListComponent },
-    ]},
+    ]
+  },
   { path: 'confirm-email', component: ConfirmEmailComponent },
   { path: 'privacy', component: PrivacyComponent },
   { path: 'facebook-login', component: FacebookLoginResponseComponent },

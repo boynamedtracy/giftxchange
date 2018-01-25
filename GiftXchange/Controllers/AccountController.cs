@@ -85,6 +85,10 @@ namespace GiftXchange.Controllers
         lastName = user.lastName,
         email = user.Email,
         facebookId = user.facebookId,
+        gender = user.gender,
+        twitterId = user.twitterId,
+        googleId = user.googleId,
+        birthDate = user.birthDate,
         photoUrl = !string.IsNullOrEmpty(user.photoUrl) ? user.photoUrl : "/assets/images/profile-pic.png",
         token = jwt
       });
@@ -108,7 +112,7 @@ namespace GiftXchange.Controllers
           Email = vm.email,
           firstName = vm.firstName,
           lastName = vm.lastName,
-          gender = vm.gender
+          gender = vm.gender          
         };
 
         var result = await _userManager.CreateAsync(user, vm.password);
@@ -222,6 +226,10 @@ namespace GiftXchange.Controllers
         lastName = user.lastName,
         email = user.Email,
         facebookId = user.facebookId,
+        gender = user.gender,
+        twitterId = user.twitterId,
+        googleId = user.googleId,
+        birthDate = user.birthDate,
         photoUrl = !string.IsNullOrEmpty(user.photoUrl) ? user.photoUrl : "/assets/images/profile-pic.png",
         token = jwt
       });
@@ -292,6 +300,10 @@ namespace GiftXchange.Controllers
         lastName = user.lastName,
         email = user.Email,
         facebookId = user.facebookId,
+        gender = user.gender,
+        twitterId = user.twitterId,
+        googleId = user.googleId,
+        birthDate = user.birthDate,
         photoUrl = !string.IsNullOrEmpty(user.photoUrl) ? user.photoUrl : "/assets/images/profile-pic.png",
         token = jwt
       });
@@ -352,6 +364,10 @@ namespace GiftXchange.Controllers
         lastName = user.lastName,
         email = user.Email,
         facebookId = user.facebookId,
+        gender = user.gender,
+        twitterId = user.twitterId,
+        googleId = user.googleId,
+        birthDate = user.birthDate,
         photoUrl = !string.IsNullOrEmpty(user.photoUrl) ? user.photoUrl : "/assets/images/profile-pic.png",
         token = jwt
       });
@@ -438,6 +454,83 @@ namespace GiftXchange.Controllers
       });
 
 
+    }
+
+    [HttpPost("updateprofile")]
+    public async Task<IActionResult> UpdateProfile([FromBody] GXUser u)
+    {
+      var user = await getUser();
+      var msg = "";
+
+      bool hasChanges = false;
+      bool emailChanged = false;
+
+      if (user.firstName != u.firstName)
+      {
+        user.firstName = u.firstName;
+        hasChanges = true;
+      }
+      if (user.lastName != u.lastName)
+      {
+        user.lastName = u.lastName;
+        hasChanges = true;
+      }
+      if (user.birthDate != u.birthDate)
+      {
+        user.birthDate = u.birthDate;
+        hasChanges = true;
+      }
+      if (user.gender != u.gender)
+      {
+        user.gender = u.gender;
+        hasChanges = true;
+      }
+      if (user.photoUrl != u.photoUrl)
+      {
+        user.photoUrl = u.photoUrl;
+        hasChanges = true;
+      }
+
+      if (user.Email != u.Email && (string.IsNullOrEmpty(user.googleId) && string.IsNullOrEmpty(user.facebookId) && string.IsNullOrEmpty(user.twitterId)))
+      {
+        user.EmailConfirmed = false;
+        user.Email = u.Email;
+        user.UserName = u.Email;
+
+        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        //var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+
+        var ub = new UriBuilder(url);
+        ub.Path = "confirm-email";
+        ub.Query = $"userId={user.Id}&code={HttpUtility.UrlEncode(code)}";
+
+        var callbackUrl = ub.ToString();
+
+        await _emailSender.SendEmailConfirmationAsync(user.Email, callbackUrl);
+        hasChanges = true;
+        emailChanged = true;
+      }
+
+      if (hasChanges)
+      {
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+        if (!emailChanged)
+        {
+          msg = "Profile updated!";
+        }
+        else
+        {
+          msg = "Your email has been updated. Please check your inbox to confirm your new email address.";
+        }
+      }
+
+      return Ok(new
+      {
+        user,
+        msg,
+        emailChanged
+      });
     }
 
     private async Task<ClaimsIdentity> GetClaimsIdentity(string userName, string password)

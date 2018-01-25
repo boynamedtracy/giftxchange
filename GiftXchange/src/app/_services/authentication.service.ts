@@ -34,6 +34,8 @@ export class AuthenticationService extends BaseService {
     private _userService: UserService) {
     super();
     if (localStorage.getItem('currentUser') != null) {
+      //localStorage.removeItem('currentUser')
+      //console.log(localStorage.removeItem('currentUser'));
       var u: User = JSON.parse(localStorage.getItem('currentUser')) as User;
       this.loggedIn = !!u;
       this._authSource.next(u);
@@ -171,6 +173,7 @@ export class AuthenticationService extends BaseService {
   getUser(): User {
     if (!this.loggedIn)
       return null;
+    //console.log(localStorage.getItem('currentUser'));
     var u: User = JSON.parse(localStorage.getItem('currentUser')) as User;
     return u;
   }

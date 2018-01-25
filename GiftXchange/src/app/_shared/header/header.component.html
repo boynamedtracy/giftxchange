@@ -8,6 +8,7 @@
           <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenuLink">
             <li class="dropdown-header">Signed in as {{user.firstName}} {{user.lastName}}</li>
             <li class="dropdown-divider"></li>
+            <li class="dropdown-item"><a [routerLink]="['/account/my-profile']" [queryParams]="{ returnUrl : thisUrl }">My Profile</a></li>
             <li class="dropdown-item"><a href="javascript:;">My groups</a></li>
             <li class="dropdown-item"><a href="javascript:;">My lists</a></li>
             <li class="dropdown-divider"></li>
