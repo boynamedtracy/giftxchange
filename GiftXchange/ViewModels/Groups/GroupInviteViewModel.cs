@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,9 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using static GiftXchange.Helpers.Enums;
 
-namespace GiftXchange.Models
+namespace GiftXchange.ViewModels.Groups
 {
-  public class GroupInvite
+  public class GroupInviteViewModel
   {
     public int id { get; set; }
     [Required]
@@ -17,9 +16,7 @@ namespace GiftXchange.Models
     [DataType(DataType.EmailAddress)]
     public string emailAddress { get; set; }
     [Required]
-    public Group group { get; set; }
-    [JsonIgnore]
-    [Required]
+    public int groupId { get; set; }
     public string userId { get; set; }
     [Required]
     public DateTime dateInvited { get; set; } = DateTime.Now;
@@ -31,9 +28,5 @@ namespace GiftXchange.Models
     public DateTime? dateDeclined { get; set; }
 
     public string message { get; set; }
-
-    
-
-
   }
 }

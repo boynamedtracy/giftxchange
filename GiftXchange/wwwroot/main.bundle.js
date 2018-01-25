@@ -237,7 +237,8 @@ var AuthenticationService = (function (_super) {
             if (user && user.token) {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                localStorage.setItem('auth_token', user.token.auth_token);
+                console.log('auth_token: ' + JSON.parse(user.token).auth_token);
+                localStorage.setItem('auth_token', JSON.parse(user.token).auth_token);
                 _this.loggedIn = true;
                 _this._authSource.next(user);
                 return true;
@@ -458,12 +459,20 @@ var GroupsService = (function (_super) {
         _this._authSource = new Rx_1.BehaviorSubject(null);
         return _this;
     }
-    GroupsService.prototype.saveGroup = function (group) {
+    GroupsService.prototype.getAuthHeaders = function () {
         var headers = new http_1.Headers();
         headers.append('Content-Type', 'application/json');
         var authToken = localStorage.getItem('auth_token');
         headers.append('Authorization', "Bearer " + authToken);
         var options = new http_1.RequestOptions({ headers: headers, withCredentials: true });
+        return options;
+    };
+    GroupsService.prototype.saveGroup = function (group) {
+        var headers = new http_1.Headers();
+        headers.append('Content-Type', 'application/json');
+        var authToken = localStorage.getItem('auth_token');
+        headers.append('Authorization', "Bearer " + authToken);
+        var options = this.getAuthHeaders();
         var vm = {
             id: group.id,
             name: group.name,
@@ -505,6 +514,38 @@ var GroupsService = (function (_super) {
             var groups = response.json();
             console.log('getGroups: ' + groups.length);
             return groups;
+        });
+    };
+    GroupsService.prototype.getMembers = function (id) {
+        var options = this.getAuthHeaders();
+        return this.http.get(this.config.apiUrl + ("/groups/getmembers/" + id), options)
+            .map(function (response) {
+            var members = response.json();
+            return members;
+        });
+    };
+    GroupsService.prototype.inviteMember = function (vm) {
+        var options = this.getAuthHeaders();
+        return this.http.post(this.config.apiUrl + '/groups/invitemember', vm, options)
+            .map(function (response) {
+            var msg = response;
+            return msg;
+        });
+    };
+    GroupsService.prototype.getInvite = function (guid) {
+        var options = this.getAuthHeaders();
+        return this.http.get(this.config.apiUrl + ("/groups/getinvite/" + guid), options)
+            .map(function (response) {
+            var invite = response.json();
+            return invite;
+        });
+    };
+    GroupsService.prototype.acceptInvite = function (vm) {
+        var options = this.getAuthHeaders();
+        return this.http.post(this.config.apiUrl + '/groups/acceptinvite', vm, options)
+            .map(function (response) {
+            var msg = response;
+            return msg;
         });
     };
     GroupsService = __decorate([
@@ -1009,6 +1050,9 @@ var add_item_component_1 = __webpack_require__("../../../../../src/app/lists/add
 var edit_list_component_1 = __webpack_require__("../../../../../src/app/lists/edit-list/edit-list.component.ts");
 var lists_component_1 = __webpack_require__("../../../../../src/app/lists/lists/lists.component.ts");
 var list_component_1 = __webpack_require__("../../../../../src/app/lists/list/list.component.ts");
+var send_invite_component_1 = __webpack_require__("../../../../../src/app/groups/send-invite/send-invite.component.ts");
+var accept_invite_component_1 = __webpack_require__("../../../../../src/app/groups/accept-invite/accept-invite.component.ts");
+var groups_component_1 = __webpack_require__("../../../../../src/app/groups/groups.component.ts");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -1036,7 +1080,10 @@ var AppModule = (function () {
                 add_item_component_1.AddItemComponent,
                 edit_list_component_1.EditListComponent,
                 lists_component_1.ListsComponent,
-                list_component_1.ListComponent
+                list_component_1.ListComponent,
+                send_invite_component_1.SendInviteComponent,
+                accept_invite_component_1.AcceptInviteComponent,
+                groups_component_1.GroupsComponent
             ],
             imports: [
                 platform_browser_1.BrowserModule,
@@ -1087,12 +1134,14 @@ var lists_component_1 = __webpack_require__("../../../../../src/app/lists/lists/
 var edit_list_component_1 = __webpack_require__("../../../../../src/app/lists/edit-list/edit-list.component.ts");
 var list_component_1 = __webpack_require__("../../../../../src/app/lists/list/list.component.ts");
 var add_item_component_1 = __webpack_require__("../../../../../src/app/lists/add-item/add-item.component.ts");
+var groups_component_1 = __webpack_require__("../../../../../src/app/groups/groups.component.ts");
+var send_invite_component_1 = __webpack_require__("../../../../../src/app/groups/send-invite/send-invite.component.ts");
+var accept_invite_component_1 = __webpack_require__("../../../../../src/app/groups/accept-invite/accept-invite.component.ts");
 var appRoutes = [
     { path: '', component: login_component_1.LoginComponent },
     { path: 'home', component: home_component_1.HomeComponent, canActivate: [auth_guard_1.AuthGuard] },
     { path: 'register', component: register_component_1.RegisterComponent },
     { path: 'gauth', component: google_signin_component_1.GoogleSigninComponent },
-    { path: 'groups/edit/:id', component: group_edit_component_1.GroupEditComponent, canActivate: [auth_guard_1.AuthGuard] },
     { path: 'group/:id', component: group_details_component_1.GroupDetailsComponent, canActivate: [auth_guard_1.AuthGuard] },
     { path: 'lists', component: lists_component_1.ListsComponent, canActivate: [auth_guard_1.AuthGuard],
         children: [
@@ -1106,6 +1155,14 @@ var appRoutes = [
     { path: 'twitter-login', component: twitter_login_response_component_1.TwitterLoginResponseComponent },
     { path: 'signin-twitter', component: twitter_auth_component_1.TwitterAuthComponent },
     { path: 'terms', component: terms_of_service_component_1.TermsOfServiceComponent },
+    {
+        path: 'groups', component: groups_component_1.GroupsComponent, canActivate: [auth_guard_1.AuthGuard],
+        children: [
+            { path: 'send-invite/:id', component: send_invite_component_1.SendInviteComponent },
+            { path: 'edit/:id', component: group_edit_component_1.GroupEditComponent },
+            { path: 'accept-invite/:guid', component: accept_invite_component_1.AcceptInviteComponent },
+        ]
+    },
     { path: '**', redirectTo: '' }
 ];
 exports.routing = router_1.RouterModule.forRoot(appRoutes);
@@ -1507,10 +1564,112 @@ exports.GoogleSigninComponent = GoogleSigninComponent;
 
 /***/ }),
 
+/***/ "../../../../../src/app/groups/accept-invite/accept-invite.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<p>\n  accept-invite works!\n</p>\n\nGUId: {{guid}}\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/accept-invite/accept-invite.component.scss":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/accept-invite/accept-invite.component.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("../../../core/esm5/core.js");
+var router_1 = __webpack_require__("../../../router/esm5/router.js");
+var authentication_service_1 = __webpack_require__("../../../../../src/app/_services/authentication.service.ts");
+var alert_service_1 = __webpack_require__("../../../../../src/app/_services/alert.service.ts");
+var groups_service_1 = __webpack_require__("../../../../../src/app/_services/groups.service.ts");
+var AcceptInviteComponent = (function () {
+    function AcceptInviteComponent(route, router, alertService, authService, groupsService) {
+        this.route = route;
+        this.router = router;
+        this.alertService = alertService;
+        this.authService = authService;
+        this.groupsService = groupsService;
+        this.loading = false;
+        this.returnUrl = '';
+        this.currentUser = authService.getUser();
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+    }
+    AcceptInviteComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        if (this.currentUser != null) {
+            this.guid = this.route.snapshot.paramMap.get('guid');
+            this.groupsService.getInvite(this.guid)
+                .subscribe(function (data) {
+                _this.invite = data;
+                if (_this.invite != null) {
+                    var vm = {
+                        guid: _this.invite.guid,
+                    };
+                    _this.groupsService.acceptInvite(vm)
+                        .subscribe(function (data) {
+                        if (data.statusText == "Success") {
+                            _this.alertService.success("You have successfully joined " + _this.group.name, true);
+                            _this.router.navigate(["/group/" + _this.group.id]);
+                        }
+                    }, function (error) {
+                        _this.alertService.error("There was an error: " + error);
+                    });
+                }
+            }, function (error) {
+                _this.alertService.error("There was an error: " + error);
+            });
+        }
+    };
+    AcceptInviteComponent = __decorate([
+        core_1.Component({
+            selector: 'app-accept-invite',
+            template: __webpack_require__("../../../../../src/app/groups/accept-invite/accept-invite.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/groups/accept-invite/accept-invite.component.scss")]
+        }),
+        __metadata("design:paramtypes", [router_1.ActivatedRoute,
+            router_1.Router,
+            alert_service_1.AlertService,
+            authentication_service_1.AuthenticationService,
+            groups_service_1.GroupsService])
+    ], AcceptInviteComponent);
+    return AcceptInviteComponent;
+}());
+exports.AcceptInviteComponent = AcceptInviteComponent;
+
+
+/***/ }),
+
 /***/ "../../../../../src/app/groups/group-details.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<gx-header></gx-header>\r\n\r\n<div id=\"mainPage\">\r\n\r\n  <div class=\"page-container\">\r\n    <p><a [routerLink]=\"['/home']\"><i class=\"fa fa-home\"></i> Home</a></p>\r\n    <h2>{{group.name}}</h2>\r\n    <div *ngIf=\"group.description\">\r\n      {{group.description}}\r\n    </div>\r\n\r\n  </div>\r\n\r\n\r\n  <footer-reveal-button></footer-reveal-button>\r\n\r\n  <div class=\"body-bg\"></div>\r\n</div>\r\n\r\n<gx-footer></gx-footer>\r\n"
+module.exports = "<gx-header></gx-header>\r\n\r\n<div id=\"mainPage\">\r\n\r\n  <alert></alert>\r\n\r\n  <div class=\"page-container\" *ngIf=\"group\">\r\n    <p><a [routerLink]=\"['/home']\"><i class=\"fa fa-home\"></i> Home</a></p>\r\n    <h2>{{group.name}}</h2>\r\n    <div *ngIf=\"group && group.description\">\r\n      {{group.description}}\r\n    </div>\r\n\r\n    <div>\r\n      {{group.owner.userName}}\r\n    </div>\r\n    <div *ngIf=\"members && members.length > 0\">\r\n      <div *ngFor=\"let member of members\">\r\n        {{member.member.userName}}\r\n      </div>\r\n    </div>\r\n    <div class=\"alert alert-warning\" *ngIf=\"!members || members.length == 0\">\r\n      No members\r\n    </div>\r\n\r\n    <p><a routerLink=\"/groups/send-invite/{{group.id}}\">Send an invite</a></p>\r\n    <p [ngStyle]=\"{ 'display' : currentUser.id != group.ownerId ? 'none' : 'auto' }\"><a routerLink=\"/groups/edit/{{group.id}}\">Edit this group</a></p>\r\n\r\n  </div>\r\n\r\n\r\n  <footer-reveal-button></footer-reveal-button>\r\n\r\n  <div class=\"body-bg\"></div>\r\n</div>\r\n\r\n<gx-footer></gx-footer>\r\n"
 
 /***/ }),
 
@@ -1542,6 +1701,7 @@ var GroupDetailsComponent = (function () {
         this.authService = authService;
         this.groupsService = groupsService;
         this.id = -1;
+        this.members = [];
         this.currentUser = authService.getUser();
         if (this.currentUser == null) {
             this.router.navigate(['/']);
@@ -1558,6 +1718,13 @@ var GroupDetailsComponent = (function () {
             this.groupsService.getGroup(this.id.toString())
                 .subscribe(function (data) {
                 _this.group = data;
+                if (_this.group != null) {
+                    _this.groupsService.getMembers(_this.group.id)
+                        .subscribe(function (data) {
+                        _this.members = data;
+                    }, function (error) {
+                    });
+                }
             }, function (error) {
                 _this.alertService.error('error: ' + error, false);
             });
@@ -1673,6 +1840,153 @@ var GroupEditComponent = (function () {
     return GroupEditComponent;
 }());
 exports.GroupEditComponent = GroupEditComponent;
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/groups.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<alert></alert>\n<p>\n  groups works!\n</p>\n<router-outlet></router-outlet>\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/groups.component.scss":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/groups.component.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("../../../core/esm5/core.js");
+var GroupsComponent = (function () {
+    function GroupsComponent() {
+    }
+    GroupsComponent.prototype.ngOnInit = function () {
+    };
+    GroupsComponent = __decorate([
+        core_1.Component({
+            selector: 'app-groups',
+            template: __webpack_require__("../../../../../src/app/groups/groups.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/groups/groups.component.scss")]
+        }),
+        __metadata("design:paramtypes", [])
+    ], GroupsComponent);
+    return GroupsComponent;
+}());
+exports.GroupsComponent = GroupsComponent;
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/send-invite/send-invite.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div *ngIf=\"group\">\r\n  <h2>Invite someone to the group {{invite.name}}</h2>\r\n  <form method=\"post\" name=\"form\" (ngSubmit)=\"f.form.valid && sendInvite()\" #f=\"ngForm\" novalidate>\r\n    <input type=\"hidden\" name=\"groupId\" id=\"groupId\" [ngModel]=\"invite.groupId\" #groupId=\"ngModel\" />\r\n    <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !emailAddress.valid }\">\r\n      <label>Email Address</label>\r\n      <input type=\"email\" id=\"emailAddress\" name=\"emailAddress\" class=\"form-control\" [(ngModel)]=\"invite.emailAddress\" #emailAddress=\"ngModel\" />\r\n    </div>\r\n    <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !message.valid }\">\r\n      <label>Message</label>\r\n      <textarea name=\"message\" id=\"message\" class=\"form-control\" [(ngModel)]=\"invite.message\" #message=\"ngModel\"></textarea>\r\n    </div>\r\n    <div class=\"form-group\">\r\n      <button type=\"submit\" [disabled]=\"loading\" class=\"btn btn-primary\">Send invitation</button>\r\n    </div>\r\n  </form>\r\n</div>\r\n\r\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/send-invite/send-invite.component.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("../../../core/esm5/core.js");
+var router_1 = __webpack_require__("../../../router/esm5/router.js");
+var authentication_service_1 = __webpack_require__("../../../../../src/app/_services/authentication.service.ts");
+var alert_service_1 = __webpack_require__("../../../../../src/app/_services/alert.service.ts");
+var groups_service_1 = __webpack_require__("../../../../../src/app/_services/groups.service.ts");
+var SendInviteComponent = (function () {
+    function SendInviteComponent(route, router, alertService, authService, groupsService) {
+        this.route = route;
+        this.router = router;
+        this.alertService = alertService;
+        this.authService = authService;
+        this.groupsService = groupsService;
+        this.invite = {};
+        this.loading = false;
+        this.currentUser = authService.getUser();
+    }
+    SendInviteComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        if (this.currentUser != null) {
+            this.id = parseInt(this.route.snapshot.paramMap.get('id'));
+            if (this.id > 0) {
+                this.groupsService.getGroup(this.id.toString())
+                    .subscribe(function (data) {
+                    _this.group = data;
+                    _this.invite.groupId = _this.group.id;
+                    _this.invite.invitedBy = _this.currentUser.id;
+                }, function (error) {
+                    _this.alertService.error('error: ' + error, false);
+                });
+            }
+        }
+    };
+    SendInviteComponent.prototype.sendInvite = function () {
+        var _this = this;
+        console.log('send invite');
+        this.loading = true;
+        var x = this.invite;
+        console.log('this.invite.groupId: ' + this.invite.groupId);
+        this.groupsService.inviteMember(x)
+            .subscribe(function (data) {
+            _this.alertService.success('Invite sent!', true);
+            _this.router.navigate(['/group/' + _this.id]);
+        }, function (error) {
+            _this.alertService.error('Error: ' + error, false);
+        });
+    };
+    SendInviteComponent = __decorate([
+        core_1.Component({
+            selector: 'app-send-invite',
+            template: __webpack_require__("../../../../../src/app/groups/send-invite/send-invite.component.html")
+        }),
+        __metadata("design:paramtypes", [router_1.ActivatedRoute,
+            router_1.Router,
+            alert_service_1.AlertService,
+            authentication_service_1.AuthenticationService,
+            groups_service_1.GroupsService])
+    ], SendInviteComponent);
+    return SendInviteComponent;
+}());
+exports.SendInviteComponent = SendInviteComponent;
 
 
 /***/ }),

@@ -28,10 +28,12 @@ namespace GiftXchange.Models
     public DateTime dateCreated { get; set; } = DateTime.Now;
     [Required]
     [Display(Name = "Owner")]
-    public GXUser owner { get; set; }
+    public string ownerId { get; set; }
     [Display(Name = "Description")]
     [DataType(DataType.Html)]
     public string description { get; set; }
+
+    public virtual GXUser owner { get; set; }
 
   }
 }

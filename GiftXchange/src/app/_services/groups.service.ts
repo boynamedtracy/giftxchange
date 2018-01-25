@@ -21,11 +21,22 @@ import { UserService } from './user.service';
 import { User } from '../_models/user.model';
 import { BaseService } from './base.service';
 import { Group } from '../_models/group.model';
+import { GroupInviteViewModel } from '../_models/group-invite.viewmodel';
+import { GroupInviteAcceptViewModel } from '../_models/group-invite-accept.viewmodel';
 
 @Injectable()
 export class GroupsService extends BaseService {
 
   private _authSource = new BehaviorSubject<User>(null);
+
+  getAuthHeaders(): RequestOptions {
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    let authToken = localStorage.getItem('auth_token');
+    headers.append('Authorization', `Bearer ${authToken}`);
+    let options = new RequestOptions({ headers: headers, withCredentials: true });
+    return options;
+  }
 
   constructor(private http: Http, private config: AppConfig,
     private _userService: UserService) {
@@ -38,7 +49,7 @@ export class GroupsService extends BaseService {
     headers.append('Content-Type', 'application/json');
     let authToken = localStorage.getItem('auth_token');
     headers.append('Authorization', `Bearer ${authToken}`);
-    let options = new RequestOptions({ headers: headers, withCredentials: true });
+    let options = this.getAuthHeaders();
 
     var vm: any = {
       id: group.id,
@@ -93,5 +104,49 @@ export class GroupsService extends BaseService {
       });
   }
 
-  
+  getMembers(id: number) {
+
+    let options = this.getAuthHeaders();
+
+    return this.http.get(this.config.apiUrl + `/groups/getmembers/${id}`, options)
+      .map((response: Response) => {
+        let members = response.json();
+        
+        return members;
+      });
+  }
+
+  inviteMember(vm: GroupInviteViewModel) {
+    let options = this.getAuthHeaders();
+
+    return this.http.post(this.config.apiUrl + '/groups/invitemember', vm, options)
+      .map((response: Response) => {        
+        let msg = response;
+        return msg;
+      });
+
+  }
+
+  getInvite(guid: string) {
+    let options = this.getAuthHeaders();
+
+    return this.http.get(this.config.apiUrl + `/groups/getinvite/${guid}`, options)
+      .map((response: Response) => {
+        let invite = response.json();
+        return invite;
+      });
+  }
+
+  acceptInvite(vm: GroupInviteAcceptViewModel) {
+    let options = this.getAuthHeaders();
+
+    return this.http.post(this.config.apiUrl + '/groups/acceptinvite', vm, options)
+      .map((response: Response) => {
+        let msg = response;
+        return msg;
+      });
+
+  }
+
+
 }

@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +13,7 @@ namespace GiftXchange.Models
     public int id { get; set; }
     [Required]
     public GXUser member { get; set; }
+    [JsonIgnore]
     [Required]
     public Group group { get; set; }
     [Required]

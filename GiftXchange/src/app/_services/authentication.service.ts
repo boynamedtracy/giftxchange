@@ -50,7 +50,8 @@ export class AuthenticationService extends BaseService {
         if (user && user.token) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           localStorage.setItem('currentUser', JSON.stringify(user));
-          localStorage.setItem('auth_token', user.token.auth_token);
+          console.log('auth_token: ' + JSON.parse(user.token).auth_token);
+          localStorage.setItem('auth_token', JSON.parse(user.token).auth_token);
           this.loggedIn = true;
           this._authSource.next(user);
           return true;

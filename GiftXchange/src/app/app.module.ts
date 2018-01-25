@@ -35,6 +35,9 @@ import { AddItemComponent } from './lists/add-item/add-item.component';
 import { EditListComponent } from './lists/edit-list/edit-list.component';
 import { ListsComponent } from './lists/lists/lists.component';
 import { ListComponent } from './lists/list/list.component';
+import { SendInviteComponent } from './groups/send-invite/send-invite.component';
+import { AcceptInviteComponent } from './groups/accept-invite/accept-invite.component';
+import { GroupsComponent } from './groups/groups.component';
 
 
 @NgModule({
@@ -60,7 +63,10 @@ import { ListComponent } from './lists/list/list.component';
     AddItemComponent,
     EditListComponent,
     ListsComponent,
-    ListComponent
+    ListComponent,
+    SendInviteComponent,
+    AcceptInviteComponent,
+    GroupsComponent
   ],
   imports: [
     BrowserModule,

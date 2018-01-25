@@ -16,6 +16,10 @@
     <None Remove="src\app\_directives\alert.component.ts" />
     <None Remove="src\app\_directives\index.ts" />
     <None Remove="src\app\_guards\auth.guard.ts" />
+    <None Remove="src\app\_models\group-invite-accept.viewmodel.ts" />
+    <None Remove="src\app\_models\group-invite.model.ts" />
+    <None Remove="src\app\_models\group-invite.viewmodel.ts" />
+    <None Remove="src\app\_models\group-member.model.ts" />
     <None Remove="src\app\_models\group.model.ts" />
     <None Remove="src\app\_models\groupEdit.viewmodel.ts" />
     <None Remove="src\app\_models\list-item.model.ts" />
@@ -55,6 +59,10 @@
     <TypeScriptCompile Include="src\app\_directives\alert.component.ts" />
     <TypeScriptCompile Include="src\app\_directives\index.ts" />
     <TypeScriptCompile Include="src\app\_guards\auth.guard.ts" />
+    <TypeScriptCompile Include="src\app\_models\group-invite-accept.viewmodel.ts" />
+    <TypeScriptCompile Include="src\app\_models\group-invite.model.ts" />
+    <TypeScriptCompile Include="src\app\_models\group-invite.viewmodel.ts" />
+    <TypeScriptCompile Include="src\app\_models\group-member.model.ts" />
     <TypeScriptCompile Include="src\app\_models\group.model.ts" />
     <TypeScriptCompile Include="src\app\_models\groupEdit.viewmodel.ts" />
     <TypeScriptCompile Include="src\app\_models\list-item.model.ts" />

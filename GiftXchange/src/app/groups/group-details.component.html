@@ -2,12 +2,29 @@
 
 <div id="mainPage">
 
-  <div class="page-container">
+  <alert></alert>
+
+  <div class="page-container" *ngIf="group">
     <p><a [routerLink]="['/home']"><i class="fa fa-home"></i> Home</a></p>
     <h2>{{group.name}}</h2>
-    <div *ngIf="group.description">
+    <div *ngIf="group && group.description">
       {{group.description}}
     </div>
+
+    <div>
+      {{group.owner.userName}}
+    </div>
+    <div *ngIf="members && members.length > 0">
+      <div *ngFor="let member of members">
+        {{member.member.userName}}
+      </div>
+    </div>
+    <div class="alert alert-warning" *ngIf="!members || members.length == 0">
+      No members
+    </div>
+
+    <p><a routerLink="/groups/send-invite/{{group.id}}">Send an invite</a></p>
+    <p [ngStyle]="{ 'display' : currentUser.id != group.ownerId ? 'none' : 'auto' }"><a routerLink="/groups/edit/{{group.id}}">Edit this group</a></p>
 
   </div>
 

@@ -19,13 +19,15 @@ import { ListsComponent } from './lists/lists/lists.component';
 import { EditListComponent } from './lists/edit-list/edit-list.component';
 import { ListComponent } from './lists/list/list.component';
 import { AddItemComponent } from './lists/add-item/add-item.component';
+import { GroupsComponent } from './groups/groups.component';
+import { SendInviteComponent } from './groups/send-invite/send-invite.component';
+import { AcceptInviteComponent } from './groups/accept-invite/accept-invite.component';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'register', component: RegisterComponent },
   { path: 'gauth', component: GoogleSigninComponent },
-  { path: 'groups/edit/:id', component: GroupEditComponent, canActivate: [AuthGuard] },
   { path: 'group/:id', component: GroupDetailsComponent, canActivate: [AuthGuard] },
   { path: 'lists', component: ListsComponent, canActivate: [AuthGuard],
     children: [
@@ -39,6 +41,14 @@ const appRoutes: Routes = [
   { path: 'twitter-login', component: TwitterLoginResponseComponent },
   { path: 'signin-twitter', component: TwitterAuthComponent },
   { path: 'terms', component: TermsOfServiceComponent },
+  {
+    path: 'groups', component: GroupsComponent, canActivate: [AuthGuard],
+    children: [
+      { path: 'send-invite/:id', component: SendInviteComponent },
+      { path: 'edit/:id', component: GroupEditComponent },
+      { path: 'accept-invite/:guid', component: AcceptInviteComponent },
+    ]
+  },
   { path: '**', redirectTo: '' }
 ];
 

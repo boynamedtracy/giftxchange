@@ -34,11 +34,9 @@ namespace GiftXchange.Controllers
   public class AccountController : BaseController
   {
 
-    private UserManager<GXUser> _userManager;
     private readonly IJwtFactory _jwtFactory;
     private readonly JwtIssuerOptions _jwtOptions;
-    private readonly IEmailSender _emailSender;
-    private readonly GXContext _context;
+
 
     private readonly FacebookAuthSettings _fbAuthSettings;
 
@@ -49,13 +47,10 @@ namespace GiftXchange.Controllers
     public AccountController(UserManager<GXUser> userManager,
       IEmailSender emailSender,
       IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions,
-      GXContext context)
+      GXContext context, IHttpContextAccessor httpContextAccessor) : base(userManager, context, httpContextAccessor, emailSender)
     {
-      _userManager = userManager;
       _jwtFactory = jwtFactory;
       _jwtOptions = jwtOptions.Value;
-      _emailSender = emailSender;
-      _context = context;
     }
 
     [AllowAnonymous]
@@ -90,7 +85,7 @@ namespace GiftXchange.Controllers
         lastName = user.lastName,
         email = user.Email,
         facebookId = user.facebookId,
-        photoUrl = user.photoUrl,
+        photoUrl = !string.IsNullOrEmpty(user.photoUrl) ? user.photoUrl : "/assets/images/profile-pic.png",
         token = jwt
       });
 
@@ -227,7 +222,7 @@ namespace GiftXchange.Controllers
         lastName = user.lastName,
         email = user.Email,
         facebookId = user.facebookId,
-        photoUrl = user.photoUrl,
+        photoUrl = !string.IsNullOrEmpty(user.photoUrl) ? user.photoUrl : "/assets/images/profile-pic.png",
         token = jwt
       });
     }
@@ -297,7 +292,7 @@ namespace GiftXchange.Controllers
         lastName = user.lastName,
         email = user.Email,
         facebookId = user.facebookId,
-        photoUrl = user.photoUrl,
+        photoUrl = !string.IsNullOrEmpty(user.photoUrl) ? user.photoUrl : "/assets/images/profile-pic.png",
         token = jwt
       });
     }
@@ -357,7 +352,7 @@ namespace GiftXchange.Controllers
         lastName = user.lastName,
         email = user.Email,
         facebookId = user.facebookId,
-        photoUrl = user.photoUrl,
+        photoUrl = !string.IsNullOrEmpty(user.photoUrl) ? user.photoUrl : "/assets/images/profile-pic.png",
         token = jwt
       });
 
@@ -438,7 +433,7 @@ namespace GiftXchange.Controllers
         lastName = user.lastName,
         email = user.Email,
         facebookId = user.facebookId,
-        photoUrl = user.photoUrl,
+        photoUrl = !string.IsNullOrEmpty(user.photoUrl) ? user.photoUrl : "/assets/images/profile-pic.png",
         token = jwt
       });
 

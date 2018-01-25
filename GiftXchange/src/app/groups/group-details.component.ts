@@ -6,6 +6,7 @@ import { AuthenticationService } from '../_services/index';
 import { GroupsService } from '../_services/groups.service';
 import { Group } from '../_models/group.model';
 import { AlertService } from '../_services/alert.service';
+import { GroupMember } from '../_models/group-member.model';
 
 @Component({
   selector: 'group-details',
@@ -17,6 +18,7 @@ export class GroupDetailsComponent implements OnInit {
   currentUser: User;
   id: number = -1;
   group: Group;
+  members: GroupMember[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -44,6 +46,17 @@ export class GroupDetailsComponent implements OnInit {
           .subscribe(
           data => {
             this.group = data;
+            if (this.group != null) {
+              this.groupsService.getMembers(this.group.id)
+                .subscribe(
+                data => {
+                  this.members = data;
+                },
+                error => {
+                  
+                }
+                );
+            }
           },
           error => {
             this.alertService.error('error: ' + error, false);

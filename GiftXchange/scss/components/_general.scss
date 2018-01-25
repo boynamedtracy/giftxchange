@@ -9,6 +9,11 @@
   background: $color-carmel;
 }
 
+alert {
+  position: relative;
+  z-index: 1000;
+}
+
 .inner {
 	padding: 1.5rem;
 }
