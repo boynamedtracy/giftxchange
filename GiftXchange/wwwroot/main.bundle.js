@@ -1794,24 +1794,15 @@ var GroupEditComponent = (function () {
     GroupEditComponent.prototype.ngOnInit = function () {
         var _this = this;
         if (this.currentUser != null) {
-            this.route.queryParams.subscribe(function (params) {
-                _this.id = params['id'];
-                if (_this.id > 0) {
-                    _this.groupsService.getGroup(_this.id.toString())
-                        .subscribe(function (data) {
-                        _this.group = data;
-                    }, function (error) {
-                        _this.alertService.error('error: ' + error, false);
-                    });
-                }
-            });
-            this.groupsService.getGroups()
-                .subscribe(function (data) {
-                _this.groups = data;
-                _this.alertService.success('groups loaded: ' + data.length);
-            }, function (error) {
-                _this.alertService.error('Error: ' + error, false);
-            });
+            this.id = parseInt(this.route.snapshot.paramMap.get('id'));
+            if (this.id > 0) {
+                this.groupsService.getGroup(this.id.toString())
+                    .subscribe(function (data) {
+                    _this.group = data;
+                }, function (error) {
+                    _this.alertService.error('error: ' + error, false);
+                });
+            }
         }
     };
     GroupEditComponent.prototype.saveGroup = function () {

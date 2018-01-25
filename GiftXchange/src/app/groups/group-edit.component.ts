@@ -38,31 +38,20 @@ export class GroupEditComponent implements OnInit {
   ngOnInit() {
     if (this.currentUser != null) {
 
-      this.route.queryParams.subscribe(params => {
-        this.id = params['id'];
-        if (this.id > 0) {
-          this.groupsService.getGroup(this.id.toString())
-            .subscribe(
-            data => {
-              this.group = data;
-            },
-            error => {
-              this.alertService.error('error: ' + error, false);
-            }
-            )
-        }
-      });
+      this.id = parseInt(this.route.snapshot.paramMap.get('id'));
 
-      this.groupsService.getGroups()
-        .subscribe(
-        data => {
-          this.groups = data;
-          this.alertService.success('groups loaded: ' + data.length);
-        },
-        error => {
-          this.alertService.error('Error: ' + error, false);
-        }
-        );
+      if (this.id > 0) {
+        this.groupsService.getGroup(this.id.toString())
+          .subscribe(
+          data => {
+            this.group = data;
+          },
+          error => {
+            this.alertService.error('error: ' + error, false);
+          }
+          )
+      }
+
     }
 
   }
