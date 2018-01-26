@@ -41,6 +41,9 @@ import { GroupsComponent } from './groups/groups.component';
 import { AccountComponent } from './account/account.component';
 import { MyProfileComponent } from './account/my-profile/my-profile.component';
 
+import { ImageCropperComponent, CropperSettings } from 'ng2-img-cropper';
+import { ProfilePicComponent } from './profile-pic/profile-pic.component';
+
 
 @NgModule({
   declarations: [
@@ -70,7 +73,9 @@ import { MyProfileComponent } from './account/my-profile/my-profile.component';
     AcceptInviteComponent,
     GroupsComponent,
     AccountComponent,
-    MyProfileComponent
+    MyProfileComponent,
+    ImageCropperComponent,
+    ProfilePicComponent
   ],
   imports: [
     BrowserModule,

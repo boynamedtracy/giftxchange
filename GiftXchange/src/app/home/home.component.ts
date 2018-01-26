@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, RouterState } from '@angular/router';
 
 import { User } from '../_models/user.model';
@@ -9,13 +9,14 @@ import { AlertService } from '../_services/alert.service';
 import { ListsService } from '../_services/lists.service';
 import { List } from '../_models/list.model';
 
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+
+
 
   currentUser: User;
   users: User[] = [];
@@ -34,6 +35,7 @@ export class HomeComponent implements OnInit {
 
     //authGuard.canActivate(this.route.snapshot, this.state.snapshot)
     this.currentUser = authService.getUser();
+
   }
 
   ngOnInit() {
@@ -63,6 +65,8 @@ export class HomeComponent implements OnInit {
     }
 
   }
+
+
 
   logout() {
     this.authService.logout();

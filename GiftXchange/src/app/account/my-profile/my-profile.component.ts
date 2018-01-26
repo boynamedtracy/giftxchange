@@ -19,8 +19,10 @@ export class MyProfileComponent implements OnInit {
 
   loading: boolean = false;
 
+
   isSocialUser: boolean = false;
   enableEmailUpdate: boolean = false;
+  changePic: boolean = false;
 
   constructor(
     private route: ActivatedRoute,

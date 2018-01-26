@@ -1011,7 +1011,7 @@ exports.AccountComponent = AccountComponent;
 /***/ "../../../../../src/app/account/my-profile/my-profile.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<alert></alert>\r\n\r\n<form name=\"form\" id=\"form\" method=\"post\" (ngSubmit)=\"f.form.valid && updateProfile()\" #f=\"ngForm\" novalidate>\r\n  <input type=\"hidden\" name=\"id\" id=\"id\" [ngModel]=\"user.id\" #id=\"ngModel\" />\r\n  <div class=\"container\">\r\n    <h2>My Profile</h2>\r\n    <div class=\"row\">\r\n      <div class=\"col-xs-12 col-sm-2\">\r\n        <img *ngIf=\"user.photoUrl\" [src]=\"user.photoUrl\" alt=\"My profile pic\" class=\"img-fluid img-thumbnail\" style=\"width: 100%; height: auto;\" />\r\n      </div>\r\n      <div class=\"col-xs-12 col-sm-7\">\r\n        <h5>About me</h5>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !email.valid && !enableEmailUpdate }\">\r\n          <label for=\"email\">Your email address</label>\r\n          <input type=\"email\" class=\"form-control\" name=\"email\" [(ngModel)]=\"user.email\" #email=\"ngModel\" [readonly]=\"!isSocialUser && !enableEmailUpdate\" />\r\n          <a href=\"javascript:;\" (click)=\"enableEmailUpdate = true\" [hidden]=\"enableEmailUpdate\" class=\"form-text text-muted\">update my email</a>\r\n          <a href=\"javascript:;\" (click)=\"enableEmailUpdate = false\" [hidden]=\"!enableEmailUpdate\" class=\"form-text text-muted\">cancel</a>\r\n          <div *ngIf=\"f.submitted && !email.valid && !enableEmailUpdate\" class=\"text-danger\">Email is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !firstName.valid }\">\r\n          <label for=\"firstName\">Youe first name</label>\r\n          <input type=\"text\" class=\"form-control\" name=\"firstName\" [(ngModel)]=\"user.firstName\" #firstName=\"ngModel\" required />\r\n          <div *ngIf=\"f.submitted && !firstName.valid\" class=\"text-danger\">First name is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !lastName.valid }\">\r\n          <label for=\"lastName\">Youe last name</label>\r\n          <input type=\"text\" class=\"form-control\" name=\"lastName\" [(ngModel)]=\"user.lastName\" #lastName=\"ngModel\" required />\r\n          <div *ngIf=\"f.submitted && !lastName.valid\" class=\"text-danger\">Last name is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !birthDate.valid }\">\r\n          <label for=\"birthDate\">Your birth date</label>\r\n          <input type=\"date\" class=\"form-control\" name=\"birthDate\" [ngModel]=\"user.birthDate | date: 'yyyy-MM-dd'\" (ngModelChange)=\"dateChanged($event)\" #birthDate=\"ngModel\"  />\r\n          <div *ngIf=\"f.submitted && !birthDate.valid\" class=\"text-danger\">Birthdate is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !male.valid && !female.valid }\">\r\n          <label for=\"gender\">Your gender ... <small>(as stated on your birth certificate)</small></label><br />\r\n          <div class=\"btn-group btn-group-toggle\" data-toggle=\"buttons\">\r\n            <label class=\"btn btn-secondary\" [ngClass]=\"{ 'active' : gender == 'm' }\" (click)=\"gender = 'm'\">\r\n              <input type=\"radio\" name=\"gender\" [value]=\"m\" [(ngModel)]=\"gender\" #male=\"ngModel\" /> Male\r\n            </label>\r\n            <label class=\"btn btn-secondary\" [ngClass]=\"{ 'active' : gender == 'f' }\" (click)=\"gender = 'f'\">\r\n              <input type=\"radio\" name=\"gender\" [value]=\"f\" [(ngModel)]=\"gender\" #female=\"ngModel\" /> Female\r\n            </label>\r\n          </div>\r\n          <div *ngIf=\"f.submitted && !male.valid && !female.valid\" class=\"text-danger\">Gender is required</div>\r\n        </div>\r\n        <div class=\"form-group\">\r\n          <button type=\"submit\" class=\"btn btn-primary\" [disabled]=\"loading\">Update my profile</button>\r\n        </div>\r\n      </div>\r\n      <div class=\"col-xs-12 col-sm-3\" *ngIf=\"isSocialUSer\">\r\n        <h5>Change my password</h5>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !password.valid }\">\r\n          <label for=\"password\">Password</label>\r\n          <input type=\"password\" class=\"form-control\" name=\"password\" [(ngModel)]=\"user.password\" #password=\"ngModel\" />\r\n          <div *ngIf=\"f.submitted && !password.valid\" class=\"help-block\">Password is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !confirmPassword.valid && confirmPassword == password }\">\r\n          <label for=\"confirmPassword\">Re-type Password</label>\r\n          <input type=\"password\" class=\"form-control\" name=\"confirmPassword\" [(ngModel)]=\"user.confirmPassword\" #confirmPassword=\"ngModel\" />\r\n          <div *ngIf=\"f.submitted && !password.valid\" class=\"help-block\">Password is required</div>\r\n          <div *ngIf=\"f.submitted && confirmPassword != password\">Password does not match</div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</form>\r\n"
+module.exports = "<alert></alert>\r\n\r\n<form name=\"form\" id=\"form\" method=\"post\" (ngSubmit)=\"f.form.valid && updateProfile()\" #f=\"ngForm\" novalidate>\r\n  <input type=\"hidden\" name=\"id\" id=\"id\" [ngModel]=\"user.id\" #id=\"ngModel\" />\r\n  <div class=\"container\">\r\n    <h2>My Profile</h2>\r\n    <div class=\"row\">\r\n      <div class=\"col-xs-12 col-sm-2\">\r\n        <img *ngIf=\"user.photoUrl && !changePic\" [src]=\"user.photoUrl\" alt=\"My profile pic\" class=\"img-fluid img-thumbnail\" style=\"width: 100%; height: auto;\" />\r\n        <gx-profile-pic [picurl]=\"user.photoUrl\" *ngIf=\"changePic\"></gx-profile-pic>\r\n        <p>\r\n          <a href=\"javascript:;\" (click)=\"changePic = true\" [hidden]=\"changePic\">Change my profile pic</a>\r\n          <a href=\"javascript:;\" (click)=\"changePic = false\" [hidden]=\"!changePic\">Cancel</a>\r\n        </p>\r\n      </div>\r\n      <div class=\"col-xs-12 col-sm-7\">\r\n        <h5>About me</h5>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !email.valid && !enableEmailUpdate }\">\r\n          <label for=\"email\">Your email address</label>\r\n          <input type=\"email\" class=\"form-control\" name=\"email\" [(ngModel)]=\"user.email\" #email=\"ngModel\" [readonly]=\"!isSocialUser && !enableEmailUpdate\" />\r\n          <a href=\"javascript:;\" (click)=\"enableEmailUpdate = true\" [hidden]=\"enableEmailUpdate\" class=\"form-text text-muted\">update my email</a>\r\n          <a href=\"javascript:;\" (click)=\"enableEmailUpdate = false\" [hidden]=\"!enableEmailUpdate\" class=\"form-text text-muted\">cancel</a>\r\n          <div *ngIf=\"f.submitted && !email.valid && !enableEmailUpdate\" class=\"text-danger\">Email is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !firstName.valid }\">\r\n          <label for=\"firstName\">Youe first name</label>\r\n          <input type=\"text\" class=\"form-control\" name=\"firstName\" [(ngModel)]=\"user.firstName\" #firstName=\"ngModel\" required />\r\n          <div *ngIf=\"f.submitted && !firstName.valid\" class=\"text-danger\">First name is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !lastName.valid }\">\r\n          <label for=\"lastName\">Youe last name</label>\r\n          <input type=\"text\" class=\"form-control\" name=\"lastName\" [(ngModel)]=\"user.lastName\" #lastName=\"ngModel\" required />\r\n          <div *ngIf=\"f.submitted && !lastName.valid\" class=\"text-danger\">Last name is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !birthDate.valid }\">\r\n          <label for=\"birthDate\">Your birth date</label>\r\n          <input type=\"date\" class=\"form-control\" name=\"birthDate\" [ngModel]=\"user.birthDate | date: 'yyyy-MM-dd'\" (ngModelChange)=\"dateChanged($event)\" #birthDate=\"ngModel\"  />\r\n          <div *ngIf=\"f.submitted && !birthDate.valid\" class=\"text-danger\">Birthdate is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !male.valid && !female.valid }\">\r\n          <label for=\"gender\">Your gender ... <small>(as stated on your birth certificate)</small></label><br />\r\n          <div class=\"btn-group btn-group-toggle\" data-toggle=\"buttons\">\r\n            <label class=\"btn btn-secondary\" [ngClass]=\"{ 'active' : gender == 'm' }\" (click)=\"gender = 'm'\">\r\n              <input type=\"radio\" name=\"gender\" [value]=\"m\" [(ngModel)]=\"gender\" #male=\"ngModel\" /> Male\r\n            </label>\r\n            <label class=\"btn btn-secondary\" [ngClass]=\"{ 'active' : gender == 'f' }\" (click)=\"gender = 'f'\">\r\n              <input type=\"radio\" name=\"gender\" [value]=\"f\" [(ngModel)]=\"gender\" #female=\"ngModel\" /> Female\r\n            </label>\r\n          </div>\r\n          <div *ngIf=\"f.submitted && !male.valid && !female.valid\" class=\"text-danger\">Gender is required</div>\r\n        </div>\r\n        <div class=\"form-group\">\r\n          <button type=\"submit\" class=\"btn btn-primary\" [disabled]=\"loading\">Update my profile</button>\r\n        </div>\r\n      </div>\r\n      <div class=\"col-xs-12 col-sm-3\" *ngIf=\"isSocialUSer\">\r\n        <h5>Change my password</h5>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !password.valid }\">\r\n          <label for=\"password\">Password</label>\r\n          <input type=\"password\" class=\"form-control\" name=\"password\" [(ngModel)]=\"user.password\" #password=\"ngModel\" />\r\n          <div *ngIf=\"f.submitted && !password.valid\" class=\"help-block\">Password is required</div>\r\n        </div>\r\n        <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !confirmPassword.valid && confirmPassword == password }\">\r\n          <label for=\"confirmPassword\">Re-type Password</label>\r\n          <input type=\"password\" class=\"form-control\" name=\"confirmPassword\" [(ngModel)]=\"user.confirmPassword\" #confirmPassword=\"ngModel\" />\r\n          <div *ngIf=\"f.submitted && !password.valid\" class=\"help-block\">Password is required</div>\r\n          <div *ngIf=\"f.submitted && confirmPassword != password\">Password does not match</div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n\r\n</form>\r\n"
 
 /***/ }),
 
@@ -1066,6 +1066,7 @@ var MyProfileComponent = (function () {
         this.loading = false;
         this.isSocialUser = false;
         this.enableEmailUpdate = false;
+        this.changePic = false;
         this.user = authService.getUser();
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
     }
@@ -1253,6 +1254,8 @@ var accept_invite_component_1 = __webpack_require__("../../../../../src/app/grou
 var groups_component_1 = __webpack_require__("../../../../../src/app/groups/groups.component.ts");
 var account_component_1 = __webpack_require__("../../../../../src/app/account/account.component.ts");
 var my_profile_component_1 = __webpack_require__("../../../../../src/app/account/my-profile/my-profile.component.ts");
+var ng2_img_cropper_1 = __webpack_require__("../../../../ng2-img-cropper/index.js");
+var profile_pic_component_1 = __webpack_require__("../../../../../src/app/profile-pic/profile-pic.component.ts");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -1285,7 +1288,9 @@ var AppModule = (function () {
                 accept_invite_component_1.AcceptInviteComponent,
                 groups_component_1.GroupsComponent,
                 account_component_1.AccountComponent,
-                my_profile_component_1.MyProfileComponent
+                my_profile_component_1.MyProfileComponent,
+                ng2_img_cropper_1.ImageCropperComponent,
+                profile_pic_component_1.ProfilePicComponent
             ],
             imports: [
                 platform_browser_1.BrowserModule,
@@ -2197,7 +2202,7 @@ exports.SendInviteComponent = SendInviteComponent;
 /***/ "../../../../../src/app/home/home.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<gx-header></gx-header>\r\n\r\n<div id=\"mainPage\">\r\n\r\n  <div class=\"page-container\" id=\"home\">\r\n\r\n\r\n\r\n    <h2>Home</h2>\r\n\r\n    <div class=\"container\">\r\n      <div class=\"row\">\r\n        <div class=\"col col-md-8\">\r\n          <h3>My Groups</h3>\r\n          <div class=\"card-deck\">\r\n            <div class=\"card\" *ngFor=\"let group of groups\">              \r\n                <div class=\"card-body\">\r\n                  <h5 class=\"card-title\">{{group.name}}</h5>\r\n                  <p class=\"card-context\" *ngIf=\"group.description.length > 0\">{{group.description}}</p>\r\n                  <a class=\"card-link\" routerLink=\"/group/{{group.id}}\">Go to Group</a>\r\n                </div>              \r\n            </div>\r\n          </div>\r\n          <a [routerLink]=\"['/groups/edit/-1']\">Add a new group</a>\r\n        </div>\r\n        <div class=\"col col-md-4\">\r\n          <h3>My Lists</h3>\r\n          <div class=\"\">\r\n            <div class=\"card\" *ngFor=\"let list of lists\">\r\n              <div class=\"card-body\">\r\n                <h5 class=\"card-title\">{{list.name}}</h5>\r\n                <div class=\"card-context\">\r\n                  <ul *ngIf=\"list.items && list.items.length > 0\">\r\n                    <li *ngFor=\"let item of list.items\">\r\n                      {{item.name}}\r\n                    </li>\r\n                  </ul>\r\n                  <a class=\"card-link\" routerLink=\"/lists/add-item/{{list.id}}\">Add an item</a>\r\n                </div>\r\n                <a class=\"card-link\" routerLink=\"/lists/list/{{list.id}}\">Go to List</a>\r\n              </div>\r\n            </div>\r\n          </div>\r\n          <a [routerLink]=\"['/lists/edit/-1']\">Add a new list</a>\r\n        </div>\r\n      </div>\r\n    </div>\r\n\r\n\r\n  </div>\r\n\r\n  <footer-reveal-button></footer-reveal-button>\r\n\r\n  <div class=\"body-bg\"></div>\r\n</div>\r\n\r\n<gx-footer></gx-footer>\r\n"
+module.exports = "<gx-header></gx-header>\r\n\r\n<div id=\"mainPage\">\r\n\r\n  <div class=\"page-container\" id=\"home\">\r\n\r\n\r\n\r\n    <h2>Home</h2>\r\n\r\n    <div class=\"container\">\r\n      <div class=\"row\">\r\n        <div class=\"col col-md-6\">\r\n          <h3>My Groups</h3>\r\n          <div class=\"card-deck\">\r\n            <div class=\"card\" *ngFor=\"let group of groups\">\r\n              <div class=\"card-body\">\r\n                <h5 class=\"card-title\">{{group.name}}</h5>\r\n                <p class=\"card-context\" *ngIf=\"group.description.length > 0\">{{group.description}}</p>\r\n                <a class=\"card-link\" routerLink=\"/group/{{group.id}}\">Go to Group</a>\r\n              </div>\r\n            </div>\r\n          </div>\r\n          <a [routerLink]=\"['/groups/edit/-1']\">Add a new group</a>\r\n        </div>\r\n        <div class=\"col col-md-4\">\r\n          <h3>My Lists</h3>\r\n          <div class=\"\">\r\n            <div class=\"card\" *ngFor=\"let list of lists\">\r\n              <div class=\"card-body\">\r\n                <h5 class=\"card-title\">{{list.name}}</h5>\r\n                <div class=\"card-context\">\r\n                  <ul *ngIf=\"list.items && list.items.length > 0\">\r\n                    <li *ngFor=\"let item of list.items\">\r\n                      {{item.name}}\r\n                    </li>\r\n                  </ul>\r\n                  <a class=\"card-link\" routerLink=\"/lists/add-item/{{list.id}}\">Add an item</a>\r\n                </div>\r\n                <a class=\"card-link\" routerLink=\"/lists/list/{{list.id}}\">Go to List</a>\r\n              </div>\r\n            </div>\r\n          </div>\r\n          <a [routerLink]=\"['/lists/edit/-1']\">Add a new list</a>\r\n        </div>\r\n        <div class=\"col col-sm-2\">\r\n\r\n        </div>\r\n      </div>\r\n    </div>\r\n\r\n\r\n  </div>\r\n\r\n  <footer-reveal-button></footer-reveal-button>\r\n\r\n  <div class=\"body-bg\"></div>\r\n</div>\r\n\r\n<gx-footer></gx-footer>\r\n"
 
 /***/ }),
 
@@ -2778,6 +2783,125 @@ var PrivacyComponent = (function () {
     return PrivacyComponent;
 }());
 exports.PrivacyComponent = PrivacyComponent;
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/profile-pic/profile-pic.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"file-upload\"> \r\n  <input id=\"custom-input\" type=\"file\" (change)=\"fileChangeListener($event)\">\r\n</div>\r\n<img-cropper #cropper [image]=\"data\" [settings]=\"cropperSettings\"></img-cropper>\r\n<button type=\"button\" class=\"btn btn-primary btn-sm\" (click)=\"savePic()\">Save</button>\r\n<!--<br>\r\n<span class=\"result rounded\" *ngIf=\"data.image\">\r\n  <img [src]=\"data.image\" [width]=\"cropperSettings.croppedWidth\" [height]=\"cropperSettings.croppedHeight\">\r\n</span>-->\r\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/profile-pic/profile-pic.component.scss":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/profile-pic/profile-pic.component.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("../../../core/esm5/core.js");
+var ng2_img_cropper_1 = __webpack_require__("../../../../ng2-img-cropper/index.js");
+var ProfilePicComponent = (function () {
+    function ProfilePicComponent() {
+        this.picurl = '';
+        //this.cropperSettings = new CropperSettings();
+        //this.cropperSettings.width = 100;
+        //this.cropperSettings.height = 100;
+        //this.cropperSettings.croppedWidth = 100;
+        //this.cropperSettings.croppedHeight = 100;
+        //this.cropperSettings.canvasWidth = 400;
+        //this.cropperSettings.canvasHeight = 300;
+        this.cropperSettings = new ng2_img_cropper_1.CropperSettings();
+        this.cropperSettings.noFileInput = true;
+        this.cropperSettings.canvasWidth = 160;
+        this.cropperSettings.canvasHeight = 160;
+        this.data = {};
+    }
+    ProfilePicComponent.prototype.ngOnInit = function () {
+        console.log('this.picUrl: ' + this.picurl);
+        var image = new Image();
+        var that = this;
+        fetch(this.picurl)
+            .then(function (res) { return res.blob(); }) // Gets the response and returns it as a blob
+            .then(function (blob) {
+            // Here's where you get access to the blob
+            // And you can use it for whatever you want
+            // Like calling ref().put(blob)
+            // Here, I use it to make an image appear on the page
+            //let objectURL = URL.createObjectURL(blob);
+            //let myImage = new Image();
+            //myImage.src = objectURL;
+            var myReader = new FileReader();
+            myReader.onloadend = function (loadEvent) {
+                image.src = loadEvent.target.result;
+                that.cropper.setImage(image);
+            };
+            myReader.readAsDataURL(blob);
+            //document.getElementById('myImg').appendChild(myImage)
+        });
+    };
+    ProfilePicComponent.prototype.savePic = function () {
+        console.log('saving: ' + JSON.stringify(this.cropper.image));
+        console.log('saving: ' + this.cropper.image.image);
+    };
+    ProfilePicComponent.prototype.fileChangeListener = function ($event) {
+        var image = new Image();
+        var file = $event.target.files[0];
+        var myReader = new FileReader();
+        var that = this;
+        myReader.onloadend = function (loadEvent) {
+            image.src = loadEvent.target.result;
+            that.cropper.setImage(image);
+        };
+        myReader.readAsDataURL(file);
+    };
+    __decorate([
+        core_1.ViewChild('cropper', undefined),
+        __metadata("design:type", ng2_img_cropper_1.ImageCropperComponent)
+    ], ProfilePicComponent.prototype, "cropper", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String)
+    ], ProfilePicComponent.prototype, "picurl", void 0);
+    ProfilePicComponent = __decorate([
+        core_1.Component({
+            selector: 'gx-profile-pic',
+            template: __webpack_require__("../../../../../src/app/profile-pic/profile-pic.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/profile-pic/profile-pic.component.scss")]
+        }),
+        __metadata("design:paramtypes", [])
+    ], ProfilePicComponent);
+    return ProfilePicComponent;
+}());
+exports.ProfilePicComponent = ProfilePicComponent;
 
 
 /***/ }),

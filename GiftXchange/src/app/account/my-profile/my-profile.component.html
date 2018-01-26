@@ -6,7 +6,12 @@
     <h2>My Profile</h2>
     <div class="row">
       <div class="col-xs-12 col-sm-2">
-        <img *ngIf="user.photoUrl" [src]="user.photoUrl" alt="My profile pic" class="img-fluid img-thumbnail" style="width: 100%; height: auto;" />
+        <img *ngIf="user.photoUrl && !changePic" [src]="user.photoUrl" alt="My profile pic" class="img-fluid img-thumbnail" style="width: 100%; height: auto;" />
+        <gx-profile-pic [picurl]="user.photoUrl" *ngIf="changePic"></gx-profile-pic>
+        <p>
+          <a href="javascript:;" (click)="changePic = true" [hidden]="changePic">Change my profile pic</a>
+          <a href="javascript:;" (click)="changePic = false" [hidden]="!changePic">Cancel</a>
+        </p>
       </div>
       <div class="col-xs-12 col-sm-7">
         <h5>About me</h5>
