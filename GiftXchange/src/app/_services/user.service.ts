@@ -72,6 +72,16 @@ export class UserService extends BaseService {
 
   }
 
+  saveprofilePic(data: string) {
+    let options = this.getAuthHeaders();
+    //console.log('saving ' + data);
+    return this.http.post(this.config.apiUrl + '/account/saveprofilepic', { imgdata: data }, options)
+      .map((response: Response) => {
+        console.log('saveprofilePic response: ' + response);
+      });
+
+  }
+
   // private helper methods
   private jwt() {
     // create authorization header with jwt token

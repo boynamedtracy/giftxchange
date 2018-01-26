@@ -23,6 +23,7 @@ namespace GiftXchange.Data
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<List> Lists { get; set; }
     public DbSet<ListItem> ListItems { get; set; }
+    public DbSet<ProfilePic> ProfilePics { get; set; }
 
   }
 }

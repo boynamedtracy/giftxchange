@@ -533,6 +533,57 @@ namespace GiftXchange.Controllers
       });
     }
 
+    [HttpGet("profilepic/{guid}")]
+    public async Task<IActionResult> ProfilePic(string guid)
+    {
+      var user = await getUser();
+      if (user != null)
+      {
+        var pp = _context.ProfilePics.SingleOrDefault(x => x.userId == user.Id && x.guid.Equals(guid));
+        if (pp != null)
+        {
+          return Ok(pp.imgData);
+        }
+      }
+      return Ok();
+    }
+
+    [HttpPost("saveprofilepic")]
+    public async Task<IActionResult> SaveProfilePic([FromBody] SaveProfilePicViewModel vm)
+    {
+      var user = await getUser();
+
+      if (vm != null && !string.IsNullOrEmpty(vm.imgdata))
+      {
+        var pp = _context.ProfilePics.FirstOrDefault(x => x.userId == user.Id);
+        if (pp != null)
+        {
+          pp.imgData = vm.imgdata;
+          _context.ProfilePics.Update(pp);
+        }
+        else
+        {
+          pp = new ProfilePic()
+          {
+            userId = user.Id,
+            imgData = vm.imgdata
+          };
+          _context.ProfilePics.Add(pp);
+        }
+
+        var purl = this.url + "/account/profilepic/" + pp.guid;
+        if (user.photoUrl != purl)
+        {
+          user.photoUrl = purl;
+          _context.Users.Update(user);
+        }
+
+        await _context.SaveChangesAsync();
+      }
+
+      return Ok();
+    }
+
     private async Task<ClaimsIdentity> GetClaimsIdentity(string userName, string password)
     {
       if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))

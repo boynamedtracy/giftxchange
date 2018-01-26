@@ -783,6 +783,14 @@ var UserService = (function (_super) {
             return vm;
         });
     };
+    UserService.prototype.saveprofilePic = function (data) {
+        var options = this.getAuthHeaders();
+        //console.log('saving ' + data);
+        return this.http.post(this.config.apiUrl + '/account/saveprofilepic', { imgdata: data }, options)
+            .map(function (response) {
+            console.log('saveprofilePic response: ' + response);
+        });
+    };
     // private helper methods
     UserService.prototype.jwt = function () {
         // create authorization header with jwt token
@@ -2829,8 +2837,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__("../../../core/esm5/core.js");
 var ng2_img_cropper_1 = __webpack_require__("../../../../ng2-img-cropper/index.js");
+var user_service_1 = __webpack_require__("../../../../../src/app/_services/user.service.ts");
 var ProfilePicComponent = (function () {
-    function ProfilePicComponent() {
+    function ProfilePicComponent(userService) {
+        this.userService = userService;
         this.picurl = '';
         //this.cropperSettings = new CropperSettings();
         //this.cropperSettings.width = 100;
@@ -2869,8 +2879,15 @@ var ProfilePicComponent = (function () {
         });
     };
     ProfilePicComponent.prototype.savePic = function () {
-        console.log('saving: ' + JSON.stringify(this.cropper.image));
-        console.log('saving: ' + this.cropper.image.image);
+        //console.log('saving: ' + JSON.stringify(this.cropper.image));
+        //nsole.log('saving: ' + this.cropper.image.image);
+        if (this.cropper.image) {
+            this.userService.saveprofilePic(this.cropper.image.image)
+                .subscribe(function (data) {
+                console.log('savePic ');
+            }, function (error) {
+            });
+        }
     };
     ProfilePicComponent.prototype.fileChangeListener = function ($event) {
         var image = new Image();
@@ -2897,7 +2914,7 @@ var ProfilePicComponent = (function () {
             template: __webpack_require__("../../../../../src/app/profile-pic/profile-pic.component.html"),
             styles: [__webpack_require__("../../../../../src/app/profile-pic/profile-pic.component.scss")]
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [user_service_1.UserService])
     ], ProfilePicComponent);
     return ProfilePicComponent;
 }());

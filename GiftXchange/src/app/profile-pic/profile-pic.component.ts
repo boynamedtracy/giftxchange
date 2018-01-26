@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { ImageCropperComponent, CropperSettings } from 'ng2-img-cropper';
+import { UserService } from '../_services/user.service';
 
 @Component({
   selector: 'gx-profile-pic',
@@ -17,7 +18,9 @@ export class ProfilePicComponent implements OnInit {
   @Input()
   picurl: string = '';
   
-  constructor() {
+  constructor(
+    private userService: UserService
+  ) {
     //this.cropperSettings = new CropperSettings();
     //this.cropperSettings.width = 100;
     //this.cropperSettings.height = 100;
@@ -69,8 +72,19 @@ export class ProfilePicComponent implements OnInit {
   }
 
   savePic() {
-    console.log('saving: ' + JSON.stringify(this.cropper.image));
-    console.log('saving: ' + this.cropper.image.image);
+    //console.log('saving: ' + JSON.stringify(this.cropper.image));
+    //nsole.log('saving: ' + this.cropper.image.image);
+    if (this.cropper.image) {
+      this.userService.saveprofilePic(this.cropper.image.image)
+        .subscribe(
+        data => {
+          console.log('savePic ');
+        },
+        error => {
+          
+        }
+        );
+    }
   }
 
   fileChangeListener($event) {
