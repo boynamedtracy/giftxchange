@@ -54,8 +54,8 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="src\app\app.config.ts" />
-    <TypeScriptCompile Include="src\app\groups\group-details.component.ts" />
-    <TypeScriptCompile Include="src\app\groups\group-edit.component.ts" />
+    <TypeScriptCompile Include="src\app\groups\group-details\group-details.component.ts" />
+    <TypeScriptCompile Include="src\app\groups\group-edit\group-edit.component.ts" />
     <TypeScriptCompile Include="src\app\_directives\alert.component.ts" />
     <TypeScriptCompile Include="src\app\_directives\index.ts" />
     <TypeScriptCompile Include="src\app\_guards\auth.guard.ts" />

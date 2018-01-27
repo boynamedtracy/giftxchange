@@ -13,9 +13,9 @@ import { TwitterLoginResponseComponent } from './twitter-login-response/twitter-
 import { TwitterAuthComponent } from './twitter-auth/twitter-auth.component';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 import { AuthGuard } from './_guards/auth.guard';
-import { GroupEditComponent } from './groups/group-edit.component';
-import { GroupDetailsComponent } from './groups/group-details.component';
-import { ListsComponent } from './lists/lists/lists.component';
+import { GroupEditComponent } from './groups/group-edit/group-edit.component';
+import { GroupDetailsComponent } from './groups/group-details/group-details.component';
+import { ListsComponent } from './lists/lists.component';
 import { EditListComponent } from './lists/edit-list/edit-list.component';
 import { ListComponent } from './lists/list/list.component';
 import { AddItemComponent } from './lists/add-item/add-item.component';
