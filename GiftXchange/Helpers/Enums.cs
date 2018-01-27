@@ -19,5 +19,19 @@ namespace GiftXchange.Helpers
       Accepted = 1,
       Declined = 2
     }
+
+    public enum ExchangeCategory
+    {
+      NotSet = 0,
+      Adult = 1,
+      Youth = 2,
+      Other = 3
+    }
+
+    public enum ExchangeType
+    {
+      Yearly = 1,
+      OneTime = 2
+    }
   }
 }

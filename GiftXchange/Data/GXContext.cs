@@ -24,6 +24,7 @@ namespace GiftXchange.Data
     public DbSet<List> Lists { get; set; }
     public DbSet<ListItem> ListItems { get; set; }
     public DbSet<ProfilePic> ProfilePics { get; set; }
+    public DbSet<Exchange> Exchanges { get; set; }
 
   }
 }
