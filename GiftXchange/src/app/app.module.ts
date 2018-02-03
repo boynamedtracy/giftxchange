@@ -33,8 +33,8 @@ import { GroupDetailsComponent } from './groups/group-details/group-details.comp
 import { ListsService } from './_services/lists.service';
 import { AddItemComponent } from './lists/add-item/add-item.component';
 import { EditListComponent } from './lists/edit-list/edit-list.component';
-import { ListsComponent } from './lists/lists/lists.component';
-import { ListComponent } from './lists/list.component';
+import { ListsComponent } from './lists/lists.component';
+import { ListComponent } from './lists/list/list.component';
 import { SendInviteComponent } from './groups/send-invite/send-invite.component';
 import { AcceptInviteComponent } from './groups/accept-invite/accept-invite.component';
 import { GroupsComponent } from './groups/groups.component';
@@ -43,6 +43,8 @@ import { MyProfileComponent } from './account/my-profile/my-profile.component';
 
 import { ImageCropperComponent, CropperSettings } from 'ng2-img-cropper';
 import { ProfilePicComponent } from './profile-pic/profile-pic.component';
+import { EditExchangeComponent } from './groups/edit-exchange/edit-exchange.component';
+import { ExchangeDetailsComponent } from './groups/exchange-details/exchange-details.component';
 
 
 @NgModule({
@@ -75,7 +77,9 @@ import { ProfilePicComponent } from './profile-pic/profile-pic.component';
     AccountComponent,
     MyProfileComponent,
     ImageCropperComponent,
-    ProfilePicComponent
+    ProfilePicComponent,
+    EditExchangeComponent,
+    ExchangeDetailsComponent
   ],
   imports: [
     BrowserModule,

@@ -34,6 +34,7 @@ namespace GiftXchange.Models
     public string description { get; set; }
 
     public virtual GXUser owner { get; set; }
+    public virtual IEnumerable<Exchange> exchanges { get; set; }
 
   }
 }

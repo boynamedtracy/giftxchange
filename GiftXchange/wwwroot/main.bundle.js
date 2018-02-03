@@ -551,6 +551,30 @@ var GroupsService = (function (_super) {
             return msg;
         });
     };
+    GroupsService.prototype.getExchanges = function (groupId) {
+        var options = this.getAuthHeaders();
+        return this.http.get(this.config.apiUrl + ("/groups/getexchanges/" + groupId), options)
+            .map(function (response) {
+            var exchanges = response.json();
+            return exchanges;
+        });
+    };
+    GroupsService.prototype.getExchange = function (id) {
+        var options = this.getAuthHeaders();
+        return this.http.get(this.config.apiUrl + ("/groups/getexchange/" + id), options)
+            .map(function (response) {
+            var exchange = response.json();
+            return exchange;
+        });
+    };
+    GroupsService.prototype.saveExchange = function (exchange) {
+        var options = this.getAuthHeaders();
+        return this.http.post(this.config.apiUrl + '/groups/saveexchange', exchange, options)
+            .map(function (response) {
+            var exchange = response.json();
+            return exchange;
+        });
+    };
     GroupsService = __decorate([
         core_1.Injectable(),
         __metadata("design:paramtypes", [http_1.Http, app_config_1.AppConfig,
@@ -1250,12 +1274,12 @@ var header_component_1 = __webpack_require__("../../../../../src/app/_shared/hea
 var footer_component_1 = __webpack_require__("../../../../../src/app/_shared/footer.component.ts");
 var footer_reveal_button_component_1 = __webpack_require__("../../../../../src/app/_shared/footer-reveal-button.component.ts");
 var groups_service_1 = __webpack_require__("../../../../../src/app/_services/groups.service.ts");
-var group_edit_component_1 = __webpack_require__("../../../../../src/app/groups/group-edit.component.ts");
-var group_details_component_1 = __webpack_require__("../../../../../src/app/groups/group-details.component.ts");
+var group_edit_component_1 = __webpack_require__("../../../../../src/app/groups/group-edit/group-edit.component.ts");
+var group_details_component_1 = __webpack_require__("../../../../../src/app/groups/group-details/group-details.component.ts");
 var lists_service_1 = __webpack_require__("../../../../../src/app/_services/lists.service.ts");
 var add_item_component_1 = __webpack_require__("../../../../../src/app/lists/add-item/add-item.component.ts");
 var edit_list_component_1 = __webpack_require__("../../../../../src/app/lists/edit-list/edit-list.component.ts");
-var lists_component_1 = __webpack_require__("../../../../../src/app/lists/lists/lists.component.ts");
+var lists_component_1 = __webpack_require__("../../../../../src/app/lists/lists.component.ts");
 var list_component_1 = __webpack_require__("../../../../../src/app/lists/list/list.component.ts");
 var send_invite_component_1 = __webpack_require__("../../../../../src/app/groups/send-invite/send-invite.component.ts");
 var accept_invite_component_1 = __webpack_require__("../../../../../src/app/groups/accept-invite/accept-invite.component.ts");
@@ -1264,6 +1288,8 @@ var account_component_1 = __webpack_require__("../../../../../src/app/account/ac
 var my_profile_component_1 = __webpack_require__("../../../../../src/app/account/my-profile/my-profile.component.ts");
 var ng2_img_cropper_1 = __webpack_require__("../../../../ng2-img-cropper/index.js");
 var profile_pic_component_1 = __webpack_require__("../../../../../src/app/profile-pic/profile-pic.component.ts");
+var edit_exchange_component_1 = __webpack_require__("../../../../../src/app/groups/edit-exchange/edit-exchange.component.ts");
+var exchange_details_component_1 = __webpack_require__("../../../../../src/app/groups/exchange-details/exchange-details.component.ts");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -1298,7 +1324,9 @@ var AppModule = (function () {
                 account_component_1.AccountComponent,
                 my_profile_component_1.MyProfileComponent,
                 ng2_img_cropper_1.ImageCropperComponent,
-                profile_pic_component_1.ProfilePicComponent
+                profile_pic_component_1.ProfilePicComponent,
+                edit_exchange_component_1.EditExchangeComponent,
+                exchange_details_component_1.ExchangeDetailsComponent
             ],
             imports: [
                 platform_browser_1.BrowserModule,
@@ -1343,9 +1371,9 @@ var twitter_login_response_component_1 = __webpack_require__("../../../../../src
 var twitter_auth_component_1 = __webpack_require__("../../../../../src/app/twitter-auth/twitter-auth.component.ts");
 var terms_of_service_component_1 = __webpack_require__("../../../../../src/app/terms-of-service/terms-of-service.component.ts");
 var auth_guard_1 = __webpack_require__("../../../../../src/app/_guards/auth.guard.ts");
-var group_edit_component_1 = __webpack_require__("../../../../../src/app/groups/group-edit.component.ts");
-var group_details_component_1 = __webpack_require__("../../../../../src/app/groups/group-details.component.ts");
-var lists_component_1 = __webpack_require__("../../../../../src/app/lists/lists/lists.component.ts");
+var group_edit_component_1 = __webpack_require__("../../../../../src/app/groups/group-edit/group-edit.component.ts");
+var group_details_component_1 = __webpack_require__("../../../../../src/app/groups/group-details/group-details.component.ts");
+var lists_component_1 = __webpack_require__("../../../../../src/app/lists/lists.component.ts");
 var edit_list_component_1 = __webpack_require__("../../../../../src/app/lists/edit-list/edit-list.component.ts");
 var list_component_1 = __webpack_require__("../../../../../src/app/lists/list/list.component.ts");
 var add_item_component_1 = __webpack_require__("../../../../../src/app/lists/add-item/add-item.component.ts");
@@ -1354,6 +1382,8 @@ var send_invite_component_1 = __webpack_require__("../../../../../src/app/groups
 var accept_invite_component_1 = __webpack_require__("../../../../../src/app/groups/accept-invite/accept-invite.component.ts");
 var account_component_1 = __webpack_require__("../../../../../src/app/account/account.component.ts");
 var my_profile_component_1 = __webpack_require__("../../../../../src/app/account/my-profile/my-profile.component.ts");
+var edit_exchange_component_1 = __webpack_require__("../../../../../src/app/groups/edit-exchange/edit-exchange.component.ts");
+var exchange_details_component_1 = __webpack_require__("../../../../../src/app/groups/exchange-details/exchange-details.component.ts");
 var appRoutes = [
     { path: '', component: login_component_1.LoginComponent },
     {
@@ -1386,6 +1416,8 @@ var appRoutes = [
             { path: 'send-invite/:id', component: send_invite_component_1.SendInviteComponent },
             { path: 'edit/:id', component: group_edit_component_1.GroupEditComponent },
             { path: 'accept-invite/:guid', component: accept_invite_component_1.AcceptInviteComponent },
+            { path: 'exchange/:id', component: exchange_details_component_1.ExchangeDetailsComponent },
+            { path: 'edit-exchange/:groupId/:id', component: edit_exchange_component_1.EditExchangeComponent }
         ]
     },
     { path: '**', redirectTo: '' }
@@ -1891,14 +1923,186 @@ exports.AcceptInviteComponent = AcceptInviteComponent;
 
 /***/ }),
 
-/***/ "../../../../../src/app/groups/group-details.component.html":
+/***/ "../../../../../src/app/groups/edit-exchange/edit-exchange.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<gx-header></gx-header>\r\n\r\n<div id=\"mainPage\">\r\n\r\n  <alert></alert>\r\n\r\n  <div class=\"page-container\" *ngIf=\"group\">\r\n    <p><a [routerLink]=\"['/home']\"><i class=\"fa fa-home\"></i> Home</a></p>\r\n    <h2>{{group.name}}</h2>\r\n    <div *ngIf=\"group && group.description\">\r\n      {{group.description}}\r\n    </div>\r\n\r\n    <div>\r\n      {{group.owner.userName}}\r\n    </div>\r\n    <div *ngIf=\"members && members.length > 0\">\r\n      <div *ngFor=\"let member of members\">\r\n        {{member.member.userName}}\r\n      </div>\r\n    </div>\r\n    <div class=\"alert alert-warning\" *ngIf=\"!members || members.length == 0\">\r\n      No members\r\n    </div>\r\n\r\n    <p><a routerLink=\"/groups/send-invite/{{group.id}}\">Send an invite</a></p>\r\n    <p [ngStyle]=\"{ 'display' : currentUser.id != group.ownerId ? 'none' : 'auto' }\"><a routerLink=\"/groups/edit/{{group.id}}\">Edit this group</a></p>\r\n\r\n  </div>\r\n\r\n\r\n  <footer-reveal-button></footer-reveal-button>\r\n\r\n  <div class=\"body-bg\"></div>\r\n</div>\r\n\r\n<gx-footer></gx-footer>\r\n"
+module.exports = "<form name=\"form\" (ngSubmit)=\"f.form.valid && saveExchange()\" #f=\"ngForm\" novalidate>\r\n  <input type=\"hidden\" name=\"id\" id=\"id\" [ngModel]=\"exchange.id\" #id=\"ngModel\" />\r\n  <input type=\"hidden\" name=\"groupId\" id=\"groupId\" [ngModel]=\"exchange.groupId\" #groupId=\"ngModel\" />\r\n  <div class=\"form-group\">\r\n    <label>Created on</label>\r\n    <span class=\"form-text\">{{exchange.dateCreated}}</span>\r\n  </div>\r\n  <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !name.valid }\">\r\n    <label>Name</label>\r\n    <input type=\"text\" name=\"name\" id=\"name\" class=\"form-control\" [(ngModel)]=\"exchange.name\" #name=\"ngModel\" required />\r\n    <div *ngIf=\"f.submitted && !name.valid\" class=\"help-block\">Name is required</div>\r\n  </div>\r\n  <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !category.valid }\">\r\n    <label>Category</label>\r\n    <input type=\"text\" name=\"category\" id=\"category\" class=\"form-control\" [(ngModel)]=\"exchange.category\" #category=\"ngModel\" required />\r\n    <div *ngIf=\"f.submitted && !category.valid\" class=\"help-block\">category is required</div>\r\n  </div>\r\n  <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !otherCategory.valid }\">\r\n    <label>Other Category</label>\r\n    <input type=\"text\" name=\"otherCategory\" id=\"otherCategory\" class=\"form-control\" [(ngModel)]=\"exchange.otherCategory\" #otherCategory=\"ngModel\" />\r\n    <div *ngIf=\"f.submitted && !otherCategory.valid\" class=\"help-block\">category is required</div>\r\n  </div>\r\n  <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !type.valid }\">\r\n    <label>Type</label>\r\n    <input type=\"text\" name=\"type\" id=\"type\" class=\"form-control\" [(ngModel)]=\"exchange.type\" #type=\"ngModel\" required />\r\n    <div *ngIf=\"f.submitted && !type.valid\" class=\"help-block\">type is required</div>\r\n  </div>\r\n  <div class=\"form-group\">\r\n    <label>Description</label>\r\n    <textarea id=\"description\" name=\"description\" [(ngModel)]=\"exchange.description\" #description=\"ngModel\" class=\"form-control\"></textarea>\r\n  </div>\r\n  <div class=\"form-group\">\r\n    <label>Member Filter</label>\r\n    <textarea id=\"memberFilter\" name=\"memberFilter\" [(ngModel)]=\"exchange.memberFilter\" #memberFilter=\"ngModel\" class=\"form-control\"></textarea>\r\n  </div>\r\n  <div class=\"form-group\">\r\n    <button type=\"submit\" [disabled]=\"loading\" class=\"btn btn-primary\">Save Exchange</button>\r\n  </div>\r\n</form>\r\n"
 
 /***/ }),
 
-/***/ "../../../../../src/app/groups/group-details.component.ts":
+/***/ "../../../../../src/app/groups/edit-exchange/edit-exchange.component.scss":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/edit-exchange/edit-exchange.component.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("../../../core/esm5/core.js");
+var router_1 = __webpack_require__("../../../router/esm5/router.js");
+var authentication_service_1 = __webpack_require__("../../../../../src/app/_services/authentication.service.ts");
+var alert_service_1 = __webpack_require__("../../../../../src/app/_services/alert.service.ts");
+var groups_service_1 = __webpack_require__("../../../../../src/app/_services/groups.service.ts");
+var EditExchangeComponent = (function () {
+    function EditExchangeComponent(route, router, alertService, authService, groupService) {
+        this.route = route;
+        this.router = router;
+        this.alertService = alertService;
+        this.authService = authService;
+        this.groupService = groupService;
+        this.exchange = {
+            dateCreated: new Date()
+        };
+        this.id = -1;
+        this.groupId = -1;
+        this.loading = false;
+        this.currentUser = authService.getUser();
+    }
+    EditExchangeComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        if (this.currentUser != null) {
+            this.id = parseInt(this.route.snapshot.paramMap.get('id'));
+            this.groupId = parseInt(this.route.snapshot.paramMap.get('groupId'));
+            if (!this.groupId || this.groupId < 1) {
+                this.alertService.error('Group not found!', true);
+                this.router.navigate(['/home']);
+            }
+            this.exchange.groupId = this.groupId;
+            if (this.id > 0) {
+                this.groupService.getExchange(this.id)
+                    .subscribe(function (data) {
+                    _this.exchange = data;
+                }, function (error) {
+                    _this.alertService.error('error: ' + error, false);
+                });
+            }
+        }
+    };
+    EditExchangeComponent.prototype.saveExchange = function () {
+        var _this = this;
+        this.loading = true;
+        this.groupService.saveExchange(this.exchange)
+            .subscribe(function (data) {
+            _this.alertService.success("Exchange added.", true);
+            _this.router.navigate(['/group/' + _this.groupId]);
+        }, function (error) {
+            _this.loading = false;
+            _this.alertService.error("There was an error: " + error, false);
+        });
+    };
+    EditExchangeComponent = __decorate([
+        core_1.Component({
+            selector: 'app-edit-exchange',
+            template: __webpack_require__("../../../../../src/app/groups/edit-exchange/edit-exchange.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/groups/edit-exchange/edit-exchange.component.scss")]
+        }),
+        __metadata("design:paramtypes", [router_1.ActivatedRoute,
+            router_1.Router,
+            alert_service_1.AlertService,
+            authentication_service_1.AuthenticationService,
+            groups_service_1.GroupsService])
+    ], EditExchangeComponent);
+    return EditExchangeComponent;
+}());
+exports.EditExchangeComponent = EditExchangeComponent;
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/exchange-details/exchange-details.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<p>\n  exchange-details works!\n</p>\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/exchange-details/exchange-details.component.scss":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/exchange-details/exchange-details.component.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("../../../core/esm5/core.js");
+var ExchangeDetailsComponent = (function () {
+    function ExchangeDetailsComponent() {
+    }
+    ExchangeDetailsComponent.prototype.ngOnInit = function () {
+    };
+    ExchangeDetailsComponent = __decorate([
+        core_1.Component({
+            selector: 'app-exchange-details',
+            template: __webpack_require__("../../../../../src/app/groups/exchange-details/exchange-details.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/groups/exchange-details/exchange-details.component.scss")]
+        }),
+        __metadata("design:paramtypes", [])
+    ], ExchangeDetailsComponent);
+    return ExchangeDetailsComponent;
+}());
+exports.ExchangeDetailsComponent = ExchangeDetailsComponent;
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/group-details/group-details.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<gx-header></gx-header>\r\n\r\n<div id=\"mainPage\">\r\n\r\n  <alert></alert>\r\n\r\n  <div class=\"page-container\" *ngIf=\"group\">\r\n    <p><a [routerLink]=\"['/home']\"><i class=\"fa fa-home\"></i> Home</a></p>\r\n    <h2>{{group.name}}</h2>\r\n    <div *ngIf=\"group && group.description\">\r\n      {{group.description}}\r\n    </div>\r\n\r\n    <div>\r\n      {{group.owner.userName}}\r\n    </div>\r\n    <div *ngIf=\"members && members.length > 0\">\r\n      <div *ngFor=\"let member of members\">\r\n        {{member.member.userName}}\r\n      </div>\r\n    </div>\r\n    <div class=\"alert alert-warning\" *ngIf=\"!members || members.length == 0\">\r\n      No members\r\n    </div>\r\n\r\n    <p><a routerLink=\"/groups/send-invite/{{group.id}}\">Send an invite</a></p>\r\n    <p [ngStyle]=\"{ 'display' : currentUser.id != group.ownerId ? 'none' : 'auto' }\"><a routerLink=\"/groups/edit/{{group.id}}\">Edit this group</a></p>\r\n\r\n    <h4>Exchanges</h4>\r\n\r\n    <div class=\"alert alert-info\" *ngIf=\"!group.exchanges || group.exchanges.length == 0\">\r\n      No exchanges have been added\r\n    </div>\r\n\r\n    <div class=\"alert alert-info\" *ngIf=\"group.exchanges && group.exchanges.length > 0\">\r\n      <div *ngFor=\"let exchange of group.exchanges\">\r\n        {{exchange.name}}\r\n        <a routerLink=\"/groups/edit-exchange/{{group.id}}/{{exchange.id}}\"><i class=\"fas fa-edit\"></i> Edit</a>\r\n      </div>\r\n    </div>\r\n\r\n    <p>\r\n      <a routerLink=\"/groups/edit-exchange/{{group.id}}/-1\">Add a new Exchange</a>\r\n    </p>\r\n\r\n  </div>\r\n\r\n\r\n  <footer-reveal-button></footer-reveal-button>\r\n\r\n  <div class=\"body-bg\"></div>\r\n</div>\r\n\r\n<gx-footer></gx-footer>\r\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/groups/group-details/group-details.component.ts":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1959,7 +2163,7 @@ var GroupDetailsComponent = (function () {
     GroupDetailsComponent = __decorate([
         core_1.Component({
             selector: 'group-details',
-            template: __webpack_require__("../../../../../src/app/groups/group-details.component.html")
+            template: __webpack_require__("../../../../../src/app/groups/group-details/group-details.component.html")
         }),
         __metadata("design:paramtypes", [router_1.ActivatedRoute,
             router_1.Router,
@@ -1974,14 +2178,14 @@ exports.GroupDetailsComponent = GroupDetailsComponent;
 
 /***/ }),
 
-/***/ "../../../../../src/app/groups/group-edit.component.html":
+/***/ "../../../../../src/app/groups/group-edit/group-edit.component.html":
 /***/ (function(module, exports) {
 
 module.exports = "<form name=\"form\" (ngSubmit)=\"f.form.valid && saveGroup()\" #f=\"ngForm\" novalidate>\r\n  <input type=\"hidden\" name=\"id\" id=\"id\" [ngModel]=\"group.id\" #id=\"ngModel\" />\r\n  <div class=\"form-group\">\r\n    <label>Created on</label>\r\n    <span class=\"form-text\">{{group.dateCreated}}</span>\r\n  </div>\r\n  <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !name.valid }\">\r\n    <label>Name</label>\r\n    <input type=\"text\" name=\"name\" id=\"name\" class=\"form-control\" [(ngModel)]=\"group.name\" #name=\"ngModel\" required />\r\n    <div *ngIf=\"f.submitted && !name.valid\" class=\"help-block\">Name is required</div>\r\n  </div>\r\n  <div class=\"form-group\" [ngClass]=\"{ 'has-error': f.submitted && !slug.valid }\">\r\n    <label>Slug</label>\r\n    <input type=\"text\" name=\"slug\" id=\"slug\" class=\"form-control\" [(ngModel)]=\"group.slug\" #slug=\"ngModel\" required />\r\n    <div *ngIf=\"f.submitted && !slug.valid\" class=\"help-block\">Slug is required</div>\r\n  </div>\r\n  <div class=\"form-group\">\r\n    <label>Description</label>\r\n    <textarea id=\"description\" name=\"description\" [(ngModel)]=\"group.description\" #description=\"ngModel\" class=\"form-control\"></textarea>\r\n  </div>\r\n  <div class=\"form-group\">\r\n    <button type=\"submit\" [disabled]=\"loading\" class=\"btn btn-primary\">Save Group</button>\r\n  </div>\r\n</form>\r\n"
 
 /***/ }),
 
-/***/ "../../../../../src/app/groups/group-edit.component.ts":
+/***/ "../../../../../src/app/groups/group-edit/group-edit.component.ts":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2045,7 +2249,7 @@ var GroupEditComponent = (function () {
     GroupEditComponent = __decorate([
         core_1.Component({
             selector: 'group-edit',
-            template: __webpack_require__("../../../../../src/app/groups/group-edit.component.html")
+            template: __webpack_require__("../../../../../src/app/groups/group-edit/group-edit.component.html")
         }),
         __metadata("design:paramtypes", [router_1.ActivatedRoute,
             router_1.Router,
@@ -2064,24 +2268,6 @@ exports.GroupEditComponent = GroupEditComponent;
 /***/ (function(module, exports) {
 
 module.exports = "<alert></alert>\n<p>\n  groups works!\n</p>\n<router-outlet></router-outlet>\n"
-
-/***/ }),
-
-/***/ "../../../../../src/app/groups/groups.component.scss":
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "", ""]);
-
-// exports
-
-
-/*** EXPORTS FROM exports-loader ***/
-module.exports = module.exports.toString();
 
 /***/ }),
 
@@ -2109,8 +2295,7 @@ var GroupsComponent = (function () {
     GroupsComponent = __decorate([
         core_1.Component({
             selector: 'app-groups',
-            template: __webpack_require__("../../../../../src/app/groups/groups.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/groups/groups.component.scss")]
+            template: __webpack_require__("../../../../../src/app/groups/groups.component.html")
         }),
         __metadata("design:paramtypes", [])
     ], GroupsComponent);
@@ -2582,14 +2767,14 @@ exports.ListComponent = ListComponent;
 
 /***/ }),
 
-/***/ "../../../../../src/app/lists/lists/lists.component.html":
+/***/ "../../../../../src/app/lists/lists.component.html":
 /***/ (function(module, exports) {
 
 module.exports = "<p>\n  lists works!\n</p>\n<router-outlet></router-outlet>\n"
 
 /***/ }),
 
-/***/ "../../../../../src/app/lists/lists/lists.component.scss":
+/***/ "../../../../../src/app/lists/lists.component.scss":
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
@@ -2607,7 +2792,7 @@ module.exports = module.exports.toString();
 
 /***/ }),
 
-/***/ "../../../../../src/app/lists/lists/lists.component.ts":
+/***/ "../../../../../src/app/lists/lists.component.ts":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2631,8 +2816,8 @@ var ListsComponent = (function () {
     ListsComponent = __decorate([
         core_1.Component({
             selector: 'app-lists',
-            template: __webpack_require__("../../../../../src/app/lists/lists/lists.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/lists/lists/lists.component.scss")]
+            template: __webpack_require__("../../../../../src/app/lists/lists.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/lists/lists.component.scss")]
         }),
         __metadata("design:paramtypes", [])
     ], ListsComponent);

@@ -24,6 +24,8 @@ import { SendInviteComponent } from './groups/send-invite/send-invite.component'
 import { AcceptInviteComponent } from './groups/accept-invite/accept-invite.component';
 import { AccountComponent } from './account/account.component';
 import { MyProfileComponent } from './account/my-profile/my-profile.component';
+import { EditExchangeComponent } from './groups/edit-exchange/edit-exchange.component';
+import { ExchangeDetailsComponent } from './groups/exchange-details/exchange-details.component';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent },
@@ -57,6 +59,8 @@ const appRoutes: Routes = [
       { path: 'send-invite/:id', component: SendInviteComponent },
       { path: 'edit/:id', component: GroupEditComponent },
       { path: 'accept-invite/:guid', component: AcceptInviteComponent },
+      { path: 'exchange/:id', component: ExchangeDetailsComponent },
+      { path: 'edit-exchange/:groupId/:id', component: EditExchangeComponent }
     ]
   },
   { path: '**', redirectTo: '' }

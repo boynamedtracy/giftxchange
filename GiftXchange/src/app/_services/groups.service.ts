@@ -148,5 +148,36 @@ export class GroupsService extends BaseService {
 
   }
 
+  getExchanges(groupId: number) {
+    let options = this.getAuthHeaders();
+
+    return this.http.get(this.config.apiUrl + `/groups/getexchanges/${groupId}`, options)
+      .map((response: Response) => {
+        let exchanges = response.json();
+        return exchanges;
+      });
+  }
+
+  getExchange(id: number) {
+    let options = this.getAuthHeaders();
+
+    return this.http.get(this.config.apiUrl + `/groups/getexchange/${id}`, options)
+      .map((response: Response) => {
+        let exchange = response.json();
+        return exchange;
+      });
+  }
+
+  saveExchange(exchange: any) {
+    let options = this.getAuthHeaders();
+
+    return this.http.post(this.config.apiUrl + '/groups/saveexchange', exchange, options)
+      .map((response: Response) => {
+        let exchange = response.json();
+        return exchange;
+      });
+
+  }
+
 
 }

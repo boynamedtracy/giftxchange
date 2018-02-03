@@ -4,22 +4,23 @@ import { AuthenticationService } from '../../_services/authentication.service';
 import { AlertService } from '../../_services/alert.service';
 import { GroupsService } from '../../_services/groups.service';
 import { User } from '../../_models/user.model';
-import { Group } from '../../_models/group.model';
+import { Exchange } from '../../_models/exchange.model';
 
 @Component({
-  selector: 'group-edit',
-  templateUrl: './group-edit.component.html'
+  selector: 'app-edit-exchange',
+  templateUrl: './edit-exchange.component.html',
+  styleUrls: ['./edit-exchange.component.scss']
 })
+export class EditExchangeComponent implements OnInit {
 
-export class GroupEditComponent implements OnInit {
 
   currentUser: User;
-  group: any = {
+  exchange: any = {
     dateCreated: new Date()
   };
-  groups: Group[] = [];
 
   id: number = -1;
+  groupId: number = -1;
 
   loading = false;
 
@@ -28,7 +29,7 @@ export class GroupEditComponent implements OnInit {
     private router: Router,
     private alertService: AlertService,
     private authService: AuthenticationService,
-    private groupsService: GroupsService
+    private groupService: GroupsService
   ) {
 
     this.currentUser = authService.getUser();
@@ -39,12 +40,20 @@ export class GroupEditComponent implements OnInit {
     if (this.currentUser != null) {
 
       this.id = parseInt(this.route.snapshot.paramMap.get('id'));
+      this.groupId = parseInt(this.route.snapshot.paramMap.get('groupId'));
+
+      if (!this.groupId || this.groupId < 1) {
+        this.alertService.error('Group not found!', true);
+        this.router.navigate(['/home']);
+      }
+
+      this.exchange.groupId = this.groupId;
 
       if (this.id > 0) {
-        this.groupsService.getGroup(this.id.toString())
+        this.groupService.getExchange(this.id)
           .subscribe(
           data => {
-            this.group = data;
+            this.exchange = data;
           },
           error => {
             this.alertService.error('error: ' + error, false);
@@ -55,13 +64,13 @@ export class GroupEditComponent implements OnInit {
     }
 
   }
-  saveGroup() {
+  saveExchange() {
     this.loading = true;
-    this.groupsService.saveGroup(this.group)
+    this.groupService.saveExchange(this.exchange)
       .subscribe(
       data => {
-        this.alertService.success("Your account has been created. You may now log in.", true);
-        this.router.navigate(['/home']);
+        this.alertService.success("Exchange added.", true);
+        this.router.navigate(['/group/' + this.groupId]);
       },
       error => {
         this.loading = false;
@@ -69,4 +78,5 @@ export class GroupEditComponent implements OnInit {
       }
       );
   }
+
 }

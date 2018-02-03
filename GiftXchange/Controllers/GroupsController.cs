@@ -94,7 +94,10 @@ namespace GiftXchange.Controllers
       var userId = _caller.Claims.Single(c => c.Type == "id");
       var user = await _userManager.FindByIdAsync(userId.ToString());
 
-      var group = _context.Groups.Include(x => x.owner).SingleOrDefault(x => x.id == id);
+      var group = _context.Groups
+        .Include(x => x.owner)
+        .Include(x => x.exchanges)
+        .SingleOrDefault(x => x.id == id);
 
       return Ok(group);
     }
@@ -251,6 +254,116 @@ namespace GiftXchange.Controllers
 
       return Ok(invite);
 
+    }
+
+    [HttpGet("getexchanges/{groupId}")]
+    public async Task<IActionResult> GetExchanges(int groupId)
+    {
+      var user = await getUser();
+
+      var group = _context.Groups.FirstOrDefault(x => x.id == groupId);
+
+      if (group == null)
+        return BadRequest("Group not found!");
+
+      if (!isGroupMember(user, group))
+      {
+        return Forbid();
+      }
+
+      var exchanges = _context.Exchanges
+        .Where(x => x.groupId == groupId)
+        .OrderBy(x => x.name);
+
+      return Ok(exchanges.ToList());
+    }
+
+    [HttpGet("getexchange/{id}")]
+    public async Task<IActionResult> GetExchange(int id)
+    {
+      var user = await getUser();
+
+      var exchange = _context.Exchanges.Include(x => x.group)
+        .SingleOrDefault(x => x.id == id);
+      if (exchange == null)
+        return BadRequest("Exchange not found!");
+
+      if (!isGroupMember(user, exchange.group))
+      {
+        return Forbid();
+      }
+
+      return Ok(exchange);
+    }
+
+    [HttpPost("saveexchange")]
+    public async Task<IActionResult> SaveExchange([FromBody] ExchangeEditViewModel vm)
+    {
+      var user = await getUser();
+
+      if (user == null)
+        return BadRequest("Not logged in");
+
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+
+      try
+      {
+        Exchange exchange;
+        if (vm.id > 0)
+        {
+          exchange = await _context.Exchanges.FirstOrDefaultAsync(x => x.id == vm.id);
+        }
+        else
+        {
+          exchange = new Exchange()
+          {
+            dateCreated = DateTime.Now,
+            createdBy = user.Id,
+            groupId = vm.groupId
+          };
+        }
+
+        exchange.name = vm.name;
+        exchange.category = vm.category;
+        exchange.type = vm.type;
+        exchange.description = vm.description;
+        exchange.memberFilter = vm.memberFilter;
+        exchange.otherCategory = vm.otherCategory;
+
+        if (exchange.id > 0)
+        {
+          _context.Exchanges.Update(exchange);
+        }
+        else
+        {
+          await _context.Exchanges.AddAsync(exchange);
+        }
+
+        await _context.SaveChangesAsync();
+
+        return Ok(exchange);
+      }
+      catch (Exception ex)
+      {
+        return BadRequest(ex);
+      }
+
+
+
+    }
+
+    private bool isGroupMember(GXUser user, Group group)
+    {
+      var members = _context.GroupMembers.Where(x => x.group == group);
+
+      if (group.owner == user || members.Any(x => x.member == user))
+      {
+        return true;
+      }
+      return false;
     }
 
   }

@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, RouterState } from '@angular/router';
 
-import { User } from '../_models/user.model';
-import { AuthenticationService } from '../_services/index';
-import { GroupsService } from '../_services/groups.service';
-import { Group } from '../_models/group.model';
-import { AlertService } from '../_services/alert.service';
-import { GroupMember } from '../_models/group-member.model';
+import { User } from '../../_models/user.model';
+import { AuthenticationService } from '../../_services/index';
+import { GroupsService } from '../../_services/groups.service';
+import { Group } from '../../_models/group.model';
+import { AlertService } from '../../_services/alert.service';
+import { GroupMember } from '../../_models/group-member.model';
 
 @Component({
   selector: 'group-details',

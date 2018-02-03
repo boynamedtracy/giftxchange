@@ -26,6 +26,23 @@
     <p><a routerLink="/groups/send-invite/{{group.id}}">Send an invite</a></p>
     <p [ngStyle]="{ 'display' : currentUser.id != group.ownerId ? 'none' : 'auto' }"><a routerLink="/groups/edit/{{group.id}}">Edit this group</a></p>
 
+    <h4>Exchanges</h4>
+
+    <div class="alert alert-info" *ngIf="!group.exchanges || group.exchanges.length == 0">
+      No exchanges have been added
+    </div>
+
+    <div class="alert alert-info" *ngIf="group.exchanges && group.exchanges.length > 0">
+      <div *ngFor="let exchange of group.exchanges">
+        {{exchange.name}}
+        <a routerLink="/groups/edit-exchange/{{group.id}}/{{exchange.id}}"><i class="fas fa-edit"></i> Edit</a>
+      </div>
+    </div>
+
+    <p>
+      <a routerLink="/groups/edit-exchange/{{group.id}}/-1">Add a new Exchange</a>
+    </p>
+
   </div>
 
 

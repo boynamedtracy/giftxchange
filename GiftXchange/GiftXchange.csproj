@@ -16,6 +16,7 @@
     <None Remove="src\app\_directives\alert.component.ts" />
     <None Remove="src\app\_directives\index.ts" />
     <None Remove="src\app\_guards\auth.guard.ts" />
+    <None Remove="src\app\_models\exchange.model.ts" />
     <None Remove="src\app\_models\group-invite-accept.viewmodel.ts" />
     <None Remove="src\app\_models\group-invite.model.ts" />
     <None Remove="src\app\_models\group-invite.viewmodel.ts" />
@@ -59,6 +60,7 @@
     <TypeScriptCompile Include="src\app\_directives\alert.component.ts" />
     <TypeScriptCompile Include="src\app\_directives\index.ts" />
     <TypeScriptCompile Include="src\app\_guards\auth.guard.ts" />
+    <TypeScriptCompile Include="src\app\_models\exchange.model.ts" />
     <TypeScriptCompile Include="src\app\_models\group-invite-accept.viewmodel.ts" />
     <TypeScriptCompile Include="src\app\_models\group-invite.model.ts" />
     <TypeScriptCompile Include="src\app\_models\group-invite.viewmodel.ts" />
@@ -77,6 +79,10 @@
     <TypeScriptCompile Include="src\app\_services\groups.service.ts" />
     <TypeScriptCompile Include="src\app\_services\index.ts" />
     <TypeScriptCompile Include="src\app\_services\user.service.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="src\app\groups\exchanges\" />
   </ItemGroup>
 
   <!--<Target Name="AngularBuild" AfterTargets="Build">

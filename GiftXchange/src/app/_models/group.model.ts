@@ -1,4 +1,5 @@
 import { User } from "./user.model";
+import { Exchange } from "./exchange.model";
 
 export class Group {
   id: number;
@@ -8,4 +9,6 @@ export class Group {
   dateCreated: Date;
   description: string;
   owner: User;
+
+  exchanges: Exchange[];
 }

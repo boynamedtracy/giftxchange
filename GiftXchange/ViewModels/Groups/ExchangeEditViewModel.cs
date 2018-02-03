@@ -1,16 +1,15 @@
 using GiftXchange.Helpers;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GiftXchange.Models
+namespace GiftXchange.ViewModels.Groups
 {
-  public class Exchange
+  public class ExchangeEditViewModel : BaseViewModel
   {
-    public int id { get; set; }
+    public int id { get; set; } = -1;
     [Required]
     public int groupId { get; set; }
     [Required]
@@ -26,9 +25,5 @@ namespace GiftXchange.Models
     public string memberFilter { get; set; }
     public DateTime dateCreated { get; set; } = DateTime.Now;
     public string createdBy { get; set; }
-
-    [JsonIgnore]
-    public virtual Group group { get; set; }
-
   }
 }
